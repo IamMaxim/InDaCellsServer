@@ -1,6 +1,5 @@
 package ru.iammaxim.InDaCellsServer.Creatures;
 
-
 import ru.iammaxim.InDaCellsServer.World.World;
 
 public class Player extends Human {
