@@ -3,7 +3,6 @@ package ru.iammaxim.NetLib;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 public class NetLib {
@@ -37,6 +36,12 @@ public class NetLib {
                         }
                     }).start();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -74,6 +79,12 @@ public class NetLib {
                         e.printStackTrace();
                     }
                 }
+            }
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
