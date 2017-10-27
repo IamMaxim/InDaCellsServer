@@ -9,20 +9,12 @@ import java.io.IOException;
 public class TestPacket extends Packet {
 
     @Override
-    public void write(DataOutputStream dos) {
-        try {
-            dos.writeUTF("Hello world");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void write(DataOutputStream dos) throws IOException {
+        dos.writeUTF("Hello world");
     }
 
     @Override
-    public void read(DataInputStream dis) {
-        try {
-            System.out.println(dis.readUTF());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void read(DataInputStream dis) throws IOException {
+        System.out.println(dis.readUTF());
     }
 }
