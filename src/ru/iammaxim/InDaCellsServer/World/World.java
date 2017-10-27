@@ -3,13 +3,45 @@ package ru.iammaxim.InDaCellsServer.World;
 import java.util.HashMap;
 
 public class World {
-    private HashMap<Integer, HashMap<Integer, Cell>> _WORLD = new HashMap<>();
+    private String name;
 
-    public void addCell(){
+    // {x, {y, cell}}
+    private HashMap<Integer, HashMap<Integer, WorldCell>> cells = new HashMap<>();
+
+    public void addCell(int x, int y, WorldCell cell) {
+        HashMap<Integer, WorldCell> row = cells.computeIfAbsent(x, k -> new HashMap<>());
+        row.put(y, cell);
+    }
+
+    public WorldCell getCell(int x, int y) {
+        HashMap<Integer, WorldCell> row = cells.get(x);
+        if (row == null)
+            return null;
+        return row.get(y);
+    }
+
+    public World(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public void save() {
 
     }
 
-    public Cell getCell(Integer x, Integer y){
-        return _WORLD.get(y).get(x);
+    public void load() {
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public HashMap<Integer, HashMap<Integer, WorldCell>> getCells() {
+        return cells;
     }
 }
