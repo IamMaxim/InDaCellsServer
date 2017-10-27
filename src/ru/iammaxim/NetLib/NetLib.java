@@ -1,28 +1,41 @@
 package ru.iammaxim.NetLib;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 public class NetLib {
     private static ServerSocket ss;
-    private static ArrayList<Client> clients = new ArrayList<>();
-    private static HashMap<Integer, Class<Packet>> packets = new HashMap<>();
+    private static Client server;
+    private static final HashMap<String, Client> clients = new HashMap<>();
+    private static HashMap<Integer, Class<? extends Packet>> packets = new HashMap<>();
+    private static HashMap<Class<? extends Packet>, Integer> packetIds = new HashMap<>();
 
-    public static void register(int id, Class<Packet> packet) {
+    public static void register(int id, Class<? extends Packet> packet) {
         packets.put(id, packet);
+        packetIds.put(packet, id);
     }
 
     public static void startServer(int port) throws IOException {
         ss = new ServerSocket(port);
         new Thread(() -> {
+            System.out.println("Starting acceptor loop...");
             while (true) {
                 try {
-                    clients.add(new Client(ss.accept()));
+                    Socket s = ss.accept();
+                    new Thread(() -> {
+                        Client c;
+                        try {
+                            c = new Client(s, true);
+                            synchronized (clients) {
+                                clients.put(c.name, c);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -30,29 +43,61 @@ public class NetLib {
         }).start();
     }
 
-    public static void start() {
-        new Thread(NetLib::loop);
+    public static void start(String ip, int port, String name) throws IOException {
+        server = new Client(new Socket(ip, port), false);
+        new Thread(() -> {
+            try {
+                server.dos.writeUTF(name);
+                loop();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private static void loop() {
+        System.out.println("Starting receiver loop...");
         while (true) {
-            for (Client c : clients) {
-                try {
-                    if (c.dis.available() > 8) {
-                        int packetID = c.dis.readInt();
-                        int len = c.dis.readInt();
+            synchronized (clients) {
+                for (Client c : clients.values()) {
+                    try {
+                        if (c.dis.available() > 8) {
+                            int packetID = c.dis.readInt();
+                            int len = c.dis.readInt();
 
-                        byte[] arr = new byte[len];
-                        c.dis.readFully(arr);
-                        packets.get(packetID).newInstance().read(new DataInputStream(new ByteArrayInputStream(arr)));
+                            byte[] arr = new byte[len];
+                            c.dis.readFully(arr);
+                            packets.get(packetID).newInstance().read(new DataInputStream(new ByteArrayInputStream(arr)));
 
+                        }
+                    } catch (IOException | IllegalAccessException | InstantiationException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException | IllegalAccessException | InstantiationException e) {
-                    e.printStackTrace();
                 }
             }
         }
     }
 
-    public static
+    private static void send(Client c, Packet packet) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        packet.write(new DataOutputStream(baos));
+        c.dos.writeInt(packetIds.get(packet.getClass()));
+        c.dos.writeInt(baos.size());
+        c.dos.write(baos.toByteArray());
+        System.out.println("Packet written");
+    }
+
+    public static void send(String name, Packet packet) throws IOException {
+        Client c;
+        synchronized (clients) {
+            c = clients.get(name);
+        }
+        if (c == null)
+            throw new IllegalArgumentException("No such name found while sending packet");
+        send(c, packet);
+    }
+
+    public static void sendToServer(Packet packet) throws IOException {
+        send(server, packet);
+    }
 }
