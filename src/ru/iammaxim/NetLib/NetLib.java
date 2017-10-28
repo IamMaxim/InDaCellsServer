@@ -77,7 +77,7 @@ public class NetLib {
                             byte[] arr = new byte[len];
                             c.dis.readFully(arr);
                             packets.get(packetID).newInstance().read(new DataInputStream(new ByteArrayInputStream(arr)));
-
+                            System.out.println("Packet read from " + (c.name != null ? c.name : "Unknown name"));
                         }
                     } catch (IOException | IllegalAccessException | InstantiationException e) {
                         e.printStackTrace();
