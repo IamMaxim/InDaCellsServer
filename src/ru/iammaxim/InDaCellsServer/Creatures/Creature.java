@@ -15,7 +15,9 @@ import java.util.HashMap;
 public class Creature {
     protected int x = 0, y = 0;
     protected World world;
+
     protected float hp, maxHP;
+    protected float attack;
     protected boolean isAlive;
     protected String name;
     protected State state = State.IDLE;
@@ -25,12 +27,16 @@ public class Creature {
     protected int actionTargetID = -1;
     protected int id;
 
-    public Creature() {
+    public Creature(){
+
     }
 
-    public Creature(World world, String name) {
+    public Creature(World world, String name, float hp, float attack) {
         this.name = name;
         this.world = world;
+        this.maxHP = hp;
+        this.hp = hp;
+        this.attack = attack;
 
         world.getCell(x, y).addCreature(this);
     }
@@ -149,6 +155,10 @@ public class Creature {
 
     private void doActivate() {
         Activator a = getCurrentCell().getActivator(actionTargetID);
+    }
+
+    public float getAttack() {
+        return attack;
     }
 
     public WorldCell getCurrentCell() {
