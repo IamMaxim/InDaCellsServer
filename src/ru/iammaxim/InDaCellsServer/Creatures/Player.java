@@ -9,6 +9,7 @@ import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 public class Player extends Human {
     protected int statsUpdateTimer = 0;
@@ -56,7 +57,7 @@ public class Player extends Human {
             try {
                 System.out.println("Sending stats: " + hp + " " + maxHP + ", " + sp + " " + maxSP + ", " + hunger + " " + maxHunger);
                 NetLib.send(name, new PacketStats(this));
-            } catch (IOException | IllegalStateException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
