@@ -18,17 +18,19 @@ public class PacketInventory implements Packet {
         this.inv = inv;
     }
 
-
     @Override
     public void write(DataOutputStream dos) throws IOException {
         dos.writeInt(inv.size());
-        for (Item i : inv) {
-            i.write(dos);
+        for (Item item : inv) {
+            item.write(dos);
         }
     }
 
     @Override
     public void read(DataInputStream dis) throws IOException {
-
+        int count = dis.readInt();
+        for (int i = 0; i < count; i++) {
+            inv.add(Item.read(dis));
+        }
     }
 }
