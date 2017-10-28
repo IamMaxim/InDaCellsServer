@@ -9,9 +9,11 @@ import java.util.HashMap;
 
 public class Human extends Creature implements Attacker {
     protected float SP;
-    protected HashMap<Item.Slot, Item> equippedItems = new HashMap<>();
+    protected HashMap<Item.Type, Item> equippedItems = new HashMap<>();
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
+    protected float hunger;
+    protected float maxSP;
 
     public Human(World world, String name) {
         super(world, name);
@@ -24,7 +26,7 @@ public class Human extends Creature implements Attacker {
         SP += 1;
     }
 
-    public HashMap<Item.Slot, Item> getEquippedItems() {
+    public HashMap<Item.Type, Item> getEquippedItems() {
         return equippedItems;
     }
 
@@ -45,5 +47,17 @@ public class Human extends Creature implements Attacker {
     public void attack(Creature victim) {
         // TODO: change to real value
         victim.damage(1);
+    }
+
+    public float getHunger() {
+        return hunger;
+    }
+
+    public void setMaxHunger(float hunger) {
+
+    }
+
+    public void setMaxSP(float maxSP) {
+        this.maxSP = maxSP;
     }
 }

@@ -2,8 +2,12 @@ package ru.iammaxim.InDaCellsServer;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
+import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
+import ru.iammaxim.NetLib.NetLib;
+
+import java.io.IOException;
 
 public class Server {
     public World world;
@@ -11,10 +15,27 @@ public class Server {
 
     public Server() {
         world = new World("World");
+
         WorldCell cell = new WorldCell();
         world.addCell(0, 0, cell);
         Player p = new Player(world, "Player1");
         cell.addCreature(p);
+        p.setMaxHP(10);
+        p.setMaxHunger(10);
+        p.setMaxSP(10);
+
+        NetLib.setOnClientConnect((client -> {
+            try {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                NetLib.send(client.name, new PacketStats(p));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }));
     }
 
     public void tick() {

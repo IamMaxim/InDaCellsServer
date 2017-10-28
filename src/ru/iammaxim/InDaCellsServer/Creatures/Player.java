@@ -1,5 +1,6 @@
 package ru.iammaxim.InDaCellsServer.Creatures;
 
+
 import ru.iammaxim.InDaCellsServer.World.World;
 
 public class Player extends Human {
@@ -12,6 +13,6 @@ public class Player extends Human {
     public void tick() {
         super.tick();
 
-        System.out.println("ticking player " + name);
+//        System.out.println("ticking player " + name);
     }
 }
