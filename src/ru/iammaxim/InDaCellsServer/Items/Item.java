@@ -14,11 +14,11 @@ public class Item {
     public final String name;
     public final Type type;
 
-    public static void registerItem(Item item){
+    public static void registerItem(Item item) {
         items.put(item.id, item);
     }
 
-    public static void registerItems(){
+    public static void registerItems() {
         registerItem(new Item(0, Type.MISC, "Доска"));
         registerItem(new Item(0, Type.MISC, "Железный прут"));
         registerItem(new Item(0, Type.MISC, "Железная пластина"));
@@ -27,11 +27,11 @@ public class Item {
         registerItem(new Item(0, Type.MISC, "Верёвка"));
     }
 
-    public static void registerWeapon(ItemWeapon weapon){
+    public static void registerWeapon(ItemWeapon weapon) {
         weapons.put(weapon.id, weapon);
     }
 
-    public static void registerWeapons(){
+    public static void registerWeapons() {
         registerWeapon(new ItemWeapon(0, "Дрын", 1));
         registerWeapon(new ItemWeapon(1, "Дубина с гвоздями", 2));
         registerWeapon(new ItemWeapon(2, "Лук", 2));
@@ -39,14 +39,14 @@ public class Item {
         registerWeapon(new ItemWeapon(4, "Полицейский пистолет", 3));
         registerWeapon(new ItemWeapon(5, "Полицейское ружьё", 8));
         registerWeapon(new ItemWeapon(6, "М14", 4));
-        registerWeapon(new ItemWeapon(7,"Пистолет из мусора", 2));
+        registerWeapon(new ItemWeapon(7, "Пистолет из мусора", 2));
         registerWeapon(new ItemWeapon(8, "Охотночье ружьё с мусора", 3));
         registerWeapon(new ItemWeapon(9, "Кухонный нож", 1));
         registerWeapon(new ItemWeapon(10, "Боевой нож", 2));
         registerWeapon(new ItemWeapon(11, "Меч из музея", 3));
     }
 
-    public static void registerArmor(ItemArmor armor){
+    public static void registerArmor(ItemArmor armor) {
         armors.put(armor.id, armor);
     }
 

@@ -31,12 +31,13 @@ public class Creature {
     public Creature(World world, String name) {
         this.name = name;
         this.world = world;
-
-        world.getCell(x, y).addCreature(this);
+        id = (int) (Math.random() * Integer.MAX_VALUE);
+//        world.getCell(x, y).addCreature(this);
     }
 
     public static Creature read(DataInputStream dis) throws IOException {
         Creature creature = new Creature();
+        creature.id = dis.readInt();
         creature.name = dis.readUTF();
         creature.x = dis.readInt();
         creature.y = dis.readInt();
@@ -49,7 +50,7 @@ public class Creature {
         return id;
     }
 
-    private void doMove() {
+    protected void doMove() {
         WorldCell oldCell = world.getCell(x, y);
         WorldCell newCell = world.getCell(newX, newY);
 
@@ -72,7 +73,7 @@ public class Creature {
     }
 
     public void move(int newX, int newY) {
-        state = State.MOVING;
+        setState(State.MOVING, 200);
         this.newX = newX;
         this.newY = newY;
     }
@@ -147,7 +148,7 @@ public class Creature {
         setState(State.ACTIVATING, activatorID);
     }
 
-    private void doActivate() {
+    protected void doActivate() {
         Activator a = getCurrentCell().getActivator(actionTargetID);
     }
 
@@ -156,6 +157,7 @@ public class Creature {
     }
 
     public void write(DataOutputStream dos) throws IOException {
+        dos.writeInt(id);
         dos.writeUTF(name);
         dos.writeInt(x);
         dos.writeInt(y);
@@ -189,7 +191,7 @@ public class Creature {
         return state;
     }
 
-    private void doAttack() {
+    protected void doAttack() {
         Creature victim = getCurrentCell().getCreature(actionTargetID);
 
         // TODO: change to real value

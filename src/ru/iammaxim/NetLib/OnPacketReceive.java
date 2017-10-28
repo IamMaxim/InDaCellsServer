@@ -1,5 +1,5 @@
 package ru.iammaxim.NetLib;
 
 public interface OnPacketReceive {
-    void onPacketReceive(Packet p);
+    void onPacketReceive(Client c, Packet p);
 }

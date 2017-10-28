@@ -2,10 +2,14 @@ package ru.iammaxim.InDaCellsServer;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
+import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
+import ru.iammaxim.InDaCellsServer.NetBus.NetBusHandler;
 import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
+import ru.iammaxim.InDaCellsServer.Packets.PacketMove;
 import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
+import ru.iammaxim.NetLib.Client;
 import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
@@ -23,6 +27,8 @@ public class Server {
                 WorldCell cell = new WorldCell();
                 world.addCell(x, y, cell);
             }
+
+        world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
 
         NetLib.setOnClientConnect(c -> {
             Player p = world.getPlayers().get(c.name);
@@ -49,6 +55,28 @@ public class Server {
                 NetLib.send(c.name, new PacketCell(p.getCurrentCell()));
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        });
+
+        NetLib.setOnPacketReceive(NetBus::handle);
+
+        NetBus.register(PacketMove.class, (c, packet) -> {
+            PacketMove p = (PacketMove) packet;
+            Player player = world.getPlayer(c.name);
+
+            switch (p.dir) {
+                case LEFT:
+                    player.move(player.getX() - 1, player.getY());
+                    break;
+                case RIGHT:
+                    player.move(player.getX() + 1, player.getY());
+                    break;
+                case UP:
+                    player.move(player.getX(), player.getY() + 1);
+                    break;
+                case DOWN:
+                    player.move(player.getX(), player.getY() - 1);
+                    break;
             }
         });
     }

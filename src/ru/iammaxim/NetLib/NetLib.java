@@ -111,7 +111,7 @@ public class NetLib {
                             packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
 
                             if (onPacketReceive != null)
-                                onPacketReceive.onPacketReceive(packet);
+                                onPacketReceive.onPacketReceive(c, packet);
 
                             System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
                         }
