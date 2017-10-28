@@ -6,7 +6,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.function.Consumer;
 
 public class NetLib {
     private static ServerSocket ss;
@@ -14,8 +13,8 @@ public class NetLib {
     private static final HashMap<String, Client> clients = new HashMap<>();
     private static HashMap<Integer, Class<? extends Packet>> packets = new HashMap<>();
     private static HashMap<Class<? extends Packet>, Integer> packetIds = new HashMap<>();
-    private static Consumer<Client> onClientConnect;
-    private static Consumer<Packet> onPacketReceive;
+    private static OnClientConnect onClientConnect;
+    private static OnPacketReceive onPacketReceive;
 
     public static void register(int id, Class<? extends Packet> packet) {
         packets.put(id, packet);
@@ -51,7 +50,7 @@ public class NetLib {
                                 clients.put(c.name, c);
                             }
                             if (onClientConnect != null)
-                                onClientConnect.accept(c);
+                                onClientConnect.onClientConnect(c);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -108,7 +107,7 @@ public class NetLib {
                             packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
 
                             if (onPacketReceive != null)
-                                onPacketReceive.accept(packet);
+                                onPacketReceive.onPacketReceive(packet);
 
                             System.out.println("Packet read from " + (c.name != null ? c.name : "Unknown name"));
                         }
@@ -155,11 +154,11 @@ public class NetLib {
         }).start();
     }
 
-    public static void setOnClientConnect(Consumer<Client> onClientConnect) {
+    public static void setOnClientConnect(OnClientConnect onClientConnect) {
         NetLib.onClientConnect = onClientConnect;
     }
 
-    public static void setOnPacketReceive(Consumer<Packet> onPacketReceive) {
+    public static void setOnPacketReceive(OnPacketReceive onPacketReceive) {
         NetLib.onPacketReceive = onPacketReceive;
     }
 }
