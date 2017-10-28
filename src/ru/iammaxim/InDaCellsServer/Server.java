@@ -52,6 +52,8 @@ public class Server {
     }
 
     public void tick() {
+//        System.out.println("Tick()");
+
         world.getCells().forEach((x, row) -> row.forEach((y, cell) -> {
             cell.getCreatures().forEach(Creature::tick);
         }));

@@ -21,7 +21,7 @@ public class Player extends Human {
         super.tick();
 
         spTimer++;
-        if (spTimer == maxSP) {
+        if (spTimer == 1000) {
             spTimer = 0;
             sp = 0;
         }

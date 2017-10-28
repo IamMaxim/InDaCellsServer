@@ -29,10 +29,13 @@ public class NetLib {
 
         register(counter++, PacketAttributes.class);
         register(counter++, PacketCell.class);
+        register(counter++, PacketDoAction.class);
         register(counter++, PacketInventory.class);
         register(counter++, PacketInventoryChange.class);
         register(counter++, PacketMove.class);
+        register(counter++, PacketStartAction.class);
         register(counter++, PacketStats.class);
+        register(counter++, PacketUnblockInput.class);
     }
 
     public static void startServer(int port) throws IOException {
@@ -110,7 +113,7 @@ public class NetLib {
                             if (onPacketReceive != null)
                                 onPacketReceive.onPacketReceive(packet);
 
-                            System.out.println("Packet read from " + (c.name != null ? c.name : "Unknown name"));
+                            System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
                         }
                     } catch (IOException | IllegalAccessException | InstantiationException e) {
                         e.printStackTrace();

@@ -8,13 +8,22 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class PacketCell extends Packet {
-    public WorldCell cell;
+//    public WorldCell cell;
+    public int x, y;
+    
 
     public PacketCell() {
     }
 
-    public PacketCell(WorldCell cell) {
-        this.cell = cell;
+//    public PacketCell(WorldCell cell) {
+//        this.cell = cell;
+//    }
+
+    public PacketCell(int x, int y, WorldCell cell) {
+        this.x = x;
+        this.y = y;
+
+
     }
 
     @Override
