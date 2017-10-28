@@ -18,14 +18,12 @@ public class Creature {
     protected float hp, maxHP;
     protected boolean isAlive;
     protected String name;
-    protected HashMap<Attribute, Float> attributes = new HashMap<>();
-    protected HashMap<Skill, Float> skills = new HashMap<>();
     protected State state = State.IDLE;
     protected int actionCounter = 0;
     protected int maxActionCounter = 200;
     protected int newX, newY;
     protected int actionTargetID = -1;
-    private int ID;
+    protected int id;
 
     public Creature() {
     }
@@ -48,7 +46,7 @@ public class Creature {
     }
 
     public int getID() {
-        return ID;
+        return id;
     }
 
     private void doMove() {

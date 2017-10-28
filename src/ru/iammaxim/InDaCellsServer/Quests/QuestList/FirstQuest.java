@@ -14,11 +14,11 @@ public class FirstQuest extends Quest{
         super(title);
         this.addStage(new KillStage(this, "Тестовый квест", new Creature(), 10));
         this.addStage(new CollectStage(this, "Тестовый квест", Item.items.get(0), 10));
-        this.addStage(new TalkStage(new Human(new World("World"), "Name")));
+        this.addStage(new TalkStage(this, "Desc", new Human(new World("World"), "Name")));
     }
 
     @Override
     public void onQuestEnd(Human h) {
-        h.addXp(500);
+        System.out.println("Quest completed.");
     }
 }

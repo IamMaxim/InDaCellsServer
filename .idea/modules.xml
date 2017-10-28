@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/InDaCellsServer.iml" filepath="$PROJECT_DIR$/InDaCellsServer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/InDaCellsServer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/InDaCellsServer_main.iml" group="InDaCellsServer" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/InDaCellsServer_test.iml" filepath="$PROJECT_DIR$/.idea/modules/InDaCellsServer_test.iml" group="InDaCellsServer" />
     </modules>
   </component>
 </project>
