@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class NetLib {
     private static ServerSocket ss;
@@ -13,13 +14,13 @@ public class NetLib {
     private static final HashMap<String, Client> clients = new HashMap<>();
     private static HashMap<Integer, Class<? extends Packet>> packets = new HashMap<>();
     private static HashMap<Class<? extends Packet>, Integer> packetIds = new HashMap<>();
-    private static Runnable onClientConnect;
+    private static Consumer<Client> onClientConnect;
 
     public static void register(int id, Class<? extends Packet> packet) {
         packets.put(id, packet);
         packetIds.put(packet, id);
 
-        System.out.println("Registered packet " + packet.getName() + "with id " + id);
+        System.out.println("Registered packet " + packet.getName() + " with id " + id);
     }
 
     public static void registerAll() {
@@ -48,6 +49,8 @@ public class NetLib {
                             synchronized (clients) {
                                 clients.put(c.name, c);
                             }
+                            if (onClientConnect != null)
+                                onClientConnect.accept(c);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -143,5 +146,9 @@ public class NetLib {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public static void setOnClientConnect(Consumer<Client> onClientConnect) {
+        NetLib.onClientConnect = onClientConnect;
     }
 }

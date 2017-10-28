@@ -13,6 +13,7 @@ public class Human extends Creature implements Attacker {
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected float hunger;
+    protected float maxSP;
 
     public Human(World world, String name) {
         super(world, name);
@@ -50,5 +51,13 @@ public class Human extends Creature implements Attacker {
 
     public float getHunger() {
         return hunger;
+    }
+
+    public void setMaxHunger(float hunger) {
+
+    }
+
+    public void setMaxSP(float maxSP) {
+        this.maxSP = maxSP;
     }
 }

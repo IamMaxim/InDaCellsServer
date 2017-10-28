@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Creature {
     protected int x = 0, y = 0;
     protected World world;
-    protected float hp;
+    protected float hp, maxHP;
     protected boolean isAlive;
     protected String name;
     protected HashMap<Attribute, Float> attributes = new HashMap<>();
@@ -113,5 +113,9 @@ public class Creature {
 
     public String getName() {
         return name;
+    }
+
+    public void setMaxHP(float maxHP) {
+        this.maxHP = maxHP;
     }
 }
