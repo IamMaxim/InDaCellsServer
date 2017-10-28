@@ -36,9 +36,9 @@ public class Item {
         registerWeapon(new ItemWeapon(0, Type.WEAPON, "Дрын", 1, 3));
         registerWeapon(new ItemWeapon(1, Type.WEAPON, "Дубина с гвоздями", 2, 4));
         registerWeapon(new ItemWeapon(2, Type.WEAPON, "Лук", 2, 3));
-        registerWeapon(new ItemWeapon(3, Type.WEAPON, "Полицейская дубина", 2, 1).addStat(ItemWeapon.AdditionalStats.ACCURACY, 5));
-        registerWeapon(new ItemWeapon(4, Type.WEAPON, "Полицейский пистолет", 3, 2).addStat(ItemWeapon.AdditionalStats.ACCURACY, 5));
-        registerWeapon(new ItemWeapon(5, Type.WEAPON, "Полицейское ружьё", 8, 8).addStat(ItemWeapon.AdditionalStats.ACCURACY, 5));
+        registerWeapon(new ItemWeapon(3, Type.WEAPON, "Полицейская дубина", 2, 1));
+        registerWeapon(new ItemWeapon(4, Type.WEAPON, "Полицейский пистолет", 3, 2));
+        registerWeapon(new ItemWeapon(5, Type.WEAPON, "Полицейское ружьё", 8, 8));
         registerWeapon(new ItemWeapon(6, Type.WEAPON, "М14", 4, 5));
         registerWeapon(new ItemWeapon(7, Type.WEAPON, "Пистолет из мусора", 2, 3));
         registerWeapon(new ItemWeapon(8, Type.WEAPON, "Охотночье ружьё с мусора", 3, 6));
