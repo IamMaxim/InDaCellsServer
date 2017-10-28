@@ -56,7 +56,7 @@ public class Player extends Human {
             try {
                 System.out.println("Sending stats: " + hp + " " + maxHP + ", " + sp + " " + maxSP + ", " + hunger + " " + maxHunger);
                 NetLib.send(name, new PacketStats(this));
-            } catch (IOException e) {
+            } catch (IOException | IllegalStateException e) {
                 e.printStackTrace();
             }
         }

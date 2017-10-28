@@ -126,7 +126,6 @@ public class Creature {
 
     public void tick() {
         if (actionCounter != -1) {
-            System.out.println("Ticking");
             if (actionCounter == maxActionCounter) {
                 if (state == State.MOVING) {
                     doMove();

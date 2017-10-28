@@ -5,6 +5,8 @@ import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
+import ru.iammaxim.NetLib.NetLib;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -40,12 +42,24 @@ public class WorldCell {
         else return "Cell";
     }
 
+    public void update() {
+        getPlayers().forEach(p -> new Thread(() -> {
+            try {
+                NetLib.send(p.getName(), new PacketCell(this));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start());
+    }
+
     public void addCreature(Creature creature) {
         creatures.put(creature.getID(), creature);
+        update();
     }
 
     public void removeCreature(Creature creature) {
         creatures.remove(creature.getID());
+        update();
     }
 
     public Collection<Creature> getCreatures() {
