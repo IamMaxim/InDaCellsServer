@@ -2,23 +2,52 @@ package ru.iammaxim.InDaCellsServer.Quests.QuestList;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Human;
+import ru.iammaxim.InDaCellsServer.Creatures.Mobs.Hedgehog;
+import ru.iammaxim.InDaCellsServer.Creatures.NPC;
+import ru.iammaxim.InDaCellsServer.Creatures.NPCs.TimTrasher;
 import ru.iammaxim.InDaCellsServer.Items.Item;
-import ru.iammaxim.InDaCellsServer.Quests.CollectStage;
-import ru.iammaxim.InDaCellsServer.Quests.KillStage;
-import ru.iammaxim.InDaCellsServer.Quests.Quest;
-import ru.iammaxim.InDaCellsServer.Quests.TalkStage;
-import ru.iammaxim.InDaCellsServer.World.World;
+import ru.iammaxim.InDaCellsServer.Quests.*;
 
 public class FirstQuest extends Quest{
     public FirstQuest(int id, String title) {
         super(title);
-        this.addStage(new KillStage(this, "Тестовый квест", new Creature(), 10));
-        this.addStage(new CollectStage(this, "Тестовый квест", Item.items.get(0), 10));
-        this.addStage(new TalkStage(this, "Desc", new Human(new World("World"), "Name")));
+        this.addStage(new Stage(this, "Тестовый убивающий квест") {
+            private int needed = 10;
+            private int rightNow = 0;
+            @Override public void onKill(Creature c) {
+                Creature hedgehog = new Hedgehog();
+                if(c.equals(hedgehog)) rightNow++;
+                if(rightNow == needed) done();
+            }
+
+            @Override public void onItemAdd(Item i) {}
+            @Override public void onTalk(NPC h) {}
+        });
+        this.addStage(new Stage(this, "Тестовый собирающий квест"){
+            private int needed = 10;
+            private int rightNow = 0;
+            private Item neededItem = Item.items.get(0);
+            @Override public void onItemAdd(Item item) {
+                if(item.equals(neededItem)) rightNow++;
+                if(rightNow == needed) done();
+            }
+
+            @Override public void onTalk(NPC n) {}
+            @Override public void onKill(Creature c) {}
+        });
+        this.addStage(new Stage(this, "Desc") {
+            private NPC neededNPC = new TimTrasher();
+            @Override public void onTalk(NPC npc) {
+                if(npc.equals(neededNPC)) done();
+            }
+
+            @Override public void onItemAdd(Item item) {}
+            @Override public void onKill(Creature creature) {}
+        });
     }
 
     @Override
-    public void onQuestEnd(Human h) {
+    public void onQuestEnd() {
         System.out.println("Quest completed.");
     }
 }

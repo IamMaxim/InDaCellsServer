@@ -31,14 +31,18 @@ public class Creature {
 
     }
 
-    public Creature(World world, String name, float hp, float attack) {
+    public Creature(World world, String name) {
         this.name = name;
         this.world = world;
+
+        world.getCell(x, y).addCreature(this);
+    }
+
+    public Creature(World world, String name, float hp, float attack) {
+        this(world, name);
         this.maxHP = hp;
         this.hp = hp;
         this.attack = attack;
-
-        world.getCell(x, y).addCreature(this);
     }
 
     public static Creature read(DataInputStream dis) throws IOException {

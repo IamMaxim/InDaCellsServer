@@ -12,7 +12,6 @@ public class Human extends Creature {
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected HashMap<Attribute, Float> attributes = new HashMap<>();
-    protected HashMap<Skill, Float> skills = new HashMap<>();
     protected float hunger;
     protected float maxHunger;
     protected float sp;
