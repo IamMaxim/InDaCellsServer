@@ -95,7 +95,7 @@ public class NetLib {
             synchronized (clients) {
                 for (Client c : clients.values()) {
                     try {
-                        if (c.dis.available() > 8) {
+                        if (c.dis.available() >= 8) {
                             int packetID = c.dis.readInt();
                             int len = c.dis.readInt();
 
@@ -148,9 +148,10 @@ public class NetLib {
         synchronized (clients) {
             c = clients.get(name);
         }
-        if (c == null)
-            throw new IllegalArgumentException("No such name found while sending packet");
-        send(c, packet);
+        if (c != null)
+            send(c, packet);
+//        else
+//            throw new IllegalArgumentException("No such name found while sending packet");
     }
 
     public static void sendToServer(Packet packet) {

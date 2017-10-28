@@ -197,6 +197,10 @@ public class Creature {
     protected void doAttack() {
         Creature victim = getCurrentCell().getCreature(actionTargetID);
 
+        // check if victim already left cell
+        if (victim == null)
+            return;
+
         // TODO: change to real value
         victim.damage(1);
     }
