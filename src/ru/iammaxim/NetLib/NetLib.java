@@ -158,4 +158,8 @@ public class NetLib {
     public static void setOnClientConnect(Consumer<Client> onClientConnect) {
         NetLib.onClientConnect = onClientConnect;
     }
+
+    public static void setOnPacketReceive(Consumer<Packet> onPacketReceive) {
+        NetLib.onPacketReceive = onPacketReceive;
+    }
 }
