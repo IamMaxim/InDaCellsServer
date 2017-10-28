@@ -30,10 +30,19 @@ public class Server {
                 p = new Player(world, c.name);
                 p.setX(startX);
                 p.setY(startY);
+
+                p.setMaxHP(10);
+                p.maxHP();
+
+                p.setMaxSP(10);
+                p.maxSP();
+
+                p.setMaxHunger(10);
+                p.maxHunger();
+
+                world.addPlayer(c.name, p);
+                world.getCell(startX, startY).addCreature(p);
             }
-            p.maxHP();
-            p.maxSP();
-            p.maxHunger();
             try {
                 NetLib.send(c.name, new PacketStats(p));
             } catch (IOException e) {

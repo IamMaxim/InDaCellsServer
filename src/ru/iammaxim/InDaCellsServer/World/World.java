@@ -11,6 +11,14 @@ public class World {
     private HashMap<Integer, HashMap<Integer, WorldCell>> cells = new HashMap<>();
     private HashMap<String, Player> players = new HashMap<>();
 
+    public Player getPlayer(String name) {
+        return players.get(name);
+    }
+
+    public void addPlayer(String name, Player p) {
+        players.put(name, p);
+    }
+
     public void addCell(int x, int y, WorldCell cell) {
         HashMap<Integer, WorldCell> row = cells.computeIfAbsent(x, k -> new HashMap<>());
         row.put(y, cell);

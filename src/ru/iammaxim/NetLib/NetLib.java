@@ -5,6 +5,7 @@ import ru.iammaxim.InDaCellsServer.Packets.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 
 public class NetLib {
@@ -126,12 +127,17 @@ public class NetLib {
     }
 
     private static void send(Client c, Packet packet) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        packet.write(new DataOutputStream(baos));
-        c.dos.writeInt(packetIds.get(packet.getClass()));
-        c.dos.writeInt(baos.size());
-        c.dos.write(baos.toByteArray());
-        System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            packet.write(new DataOutputStream(baos));
+            c.dos.writeInt(packetIds.get(packet.getClass()));
+            c.dos.writeInt(baos.size());
+            c.dos.write(baos.toByteArray());
+            System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
+        } catch (SocketException e) {
+            e.printStackTrace();
+            clients.remove(c.name);
+        }
     }
 
     public static void send(String name, Packet packet) throws IOException {

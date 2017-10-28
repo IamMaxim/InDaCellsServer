@@ -18,6 +18,9 @@ public class PacketStats extends Packet {
         hp = human.getHP();
         hunger = human.getHunger();
         sp = human.getSP();
+        maxHP = human.getMaxHP();
+        maxHunger = human.getMaxHunger();
+        maxSP = human.getMaxSP();
     }
 
     @Override
