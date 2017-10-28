@@ -45,7 +45,7 @@ public class Human extends Creature {
 
     public void addItem(Item item) {
         inventory.add(item);
-        attachedQuests.forEach(q -> q.onItemAdd(item));
+        attachedQuests.forEach(q -> q.getCurrentStage().onItemAdd(item));
     }
 
     public float getHunger() {
