@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        NetLib.registerAll();
         NetLib.startServer(23671);
         Server server = new Server();
         server.run();

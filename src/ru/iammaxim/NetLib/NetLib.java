@@ -1,5 +1,7 @@
 package ru.iammaxim.NetLib;
 
+import ru.iammaxim.InDaCellsServer.Packets.*;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,6 +17,17 @@ public class NetLib {
     public static void register(int id, Class<? extends Packet> packet) {
         packets.put(id, packet);
         packetIds.put(packet, id);
+    }
+
+    public static void registerAll() {
+        int counter = 0;
+
+        register(counter++, PacketAttributes.class);
+        register(counter++, PacketCell.class);
+        register(counter++, PacketInventory.class);
+        register(counter++, PacketInventoryChange.class);
+        register(counter++, PacketMove.class);
+        register(counter++, PacketStats.class);
     }
 
     public static void startServer(int port) throws IOException {
