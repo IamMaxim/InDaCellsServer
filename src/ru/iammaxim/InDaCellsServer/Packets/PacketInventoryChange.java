@@ -7,7 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class PacketInventoryChange implements Packet {
+public class PacketInventoryChange extends Packet {
     public enum Type {
         ADD,
         REMOVE

@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class PacketMove implements Packet {
+public class PacketMove extends Packet {
     public enum Direction {
         LEFT,
         RIGHT,

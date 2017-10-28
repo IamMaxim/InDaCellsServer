@@ -8,7 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PacketInventory implements Packet {
+public class PacketInventory extends Packet {
     public ArrayList<Item> inv = new ArrayList<>();
 
     public PacketInventory() {

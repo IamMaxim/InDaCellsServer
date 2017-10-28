@@ -9,7 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class PacketAttributes implements Packet {
+public class PacketAttributes extends Packet {
     public HashMap<Attribute, Float> attributes = new HashMap<>();
     public HashMap<Skill, Float> skills = new HashMap<>();
 

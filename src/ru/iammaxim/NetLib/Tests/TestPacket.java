@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class TestPacket implements Packet {
+public class TestPacket extends Packet {
 
     @Override
     public void write(DataOutputStream dos) throws IOException {

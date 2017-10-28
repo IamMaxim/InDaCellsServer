@@ -7,7 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class PacketCell implements Packet {
+public class PacketCell extends Packet {
     public WorldCell cell;
 
     public PacketCell() {

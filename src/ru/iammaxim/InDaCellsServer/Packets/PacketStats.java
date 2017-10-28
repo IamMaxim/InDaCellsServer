@@ -7,7 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class PacketStats implements Packet {
+public class PacketStats extends Packet {
     public float hp, hunger, sp;
 
     public PacketStats() {

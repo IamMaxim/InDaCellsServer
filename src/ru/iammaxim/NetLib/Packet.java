@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public interface Packet {
-    void write(DataOutputStream dos) throws IOException;
-    void read(DataInputStream dis) throws IOException;
+public abstract class Packet {
+    abstract public void write(DataOutputStream dos) throws IOException;
+    abstract public void read(DataInputStream dis) throws IOException;
 }
