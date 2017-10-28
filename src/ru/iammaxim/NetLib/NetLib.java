@@ -48,10 +48,10 @@ public class NetLib {
         }).start();
     }
 
-    public static void start(String ip, int port, String name) throws IOException {
-        server = new Client(new Socket(ip, port), false);
+    public static void start(String ip, int port, String name) {
         new Thread(() -> {
             try {
+                server = new Client(new Socket(ip, port), false);
                 server.dos.writeUTF(name);
                 loop();
             } catch (IOException e) {
@@ -112,7 +112,13 @@ public class NetLib {
         send(c, packet);
     }
 
-    public static void sendToServer(Packet packet) throws IOException {
-        send(server, packet);
+    public static void sendToServer(Packet packet) {
+        new Thread(() -> {
+            try {
+                send(server, packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

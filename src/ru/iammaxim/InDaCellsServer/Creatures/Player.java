@@ -13,6 +13,6 @@ public class Player extends Human {
     public void tick() {
         super.tick();
 
-        System.out.println("ticking player " + name);
+//        System.out.println("ticking player " + name);
     }
 }

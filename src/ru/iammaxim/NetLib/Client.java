@@ -1,7 +1,5 @@
 package ru.iammaxim.NetLib;
 
-import com.sun.media.sound.InvalidDataException;
-
 import java.io.*;
 import java.net.Socket;
 
@@ -21,5 +19,6 @@ public class Client {
         dis = new DataInputStream(is);
         if (hasName)
             name = dis.readUTF();
+        System.out.println("Client connected. " + (name != null ? name : ""));
     }
 }
