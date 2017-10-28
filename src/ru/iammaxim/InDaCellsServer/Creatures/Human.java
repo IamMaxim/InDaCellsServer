@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Human extends Creature implements Attacker {
-    protected float SP;
     protected HashMap<Item.Type, Item> equippedItems = new HashMap<>();
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected float hunger;
+    protected float maxHunger;
+    protected float sp;
     protected float maxSP;
 
     public Human(World world, String name) {
@@ -23,7 +24,11 @@ public class Human extends Creature implements Attacker {
     public void tick() {
         super.tick();
 
-        SP += 1;
+        hp += 0.01;
+        hp = Math.min(hp, maxHP);
+
+        sp += 0.01;
+        sp = Math.min(hp, maxHP);
     }
 
     public HashMap<Item.Type, Item> getEquippedItems() {
@@ -35,7 +40,7 @@ public class Human extends Creature implements Attacker {
     }
 
     public float getSP() {
-        return SP;
+        return sp;
     }
 
     public void addItem(Item item) {
@@ -54,7 +59,7 @@ public class Human extends Creature implements Attacker {
     }
 
     public void setMaxHunger(float hunger) {
-
+        maxHunger = hunger;
     }
 
     public void setMaxSP(float maxSP) {

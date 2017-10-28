@@ -131,7 +131,7 @@ public class NetLib {
         c.dos.writeInt(packetIds.get(packet.getClass()));
         c.dos.writeInt(baos.size());
         c.dos.write(baos.toByteArray());
-        System.out.println("Packet written to " + (c.name != null ? c.name : "unknown client"));
+        System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
     }
 
     public static void send(String name, Packet packet) throws IOException {

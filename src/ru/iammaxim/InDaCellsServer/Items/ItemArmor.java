@@ -1,7 +1,14 @@
 package ru.iammaxim.InDaCellsServer.Items;
 
 public class ItemArmor extends Item {
-    public ItemArmor(int id, Type type, String name) {
-        super(id, type, name);
+    private float armorValue;
+
+    public ItemArmor(int id, String name, float armorValue) {
+        super(id, Type.ARMOR, name);
+        this.armorValue = armorValue;
+    }
+
+    public float getArmorValue() {
+        return armorValue;
     }
 }

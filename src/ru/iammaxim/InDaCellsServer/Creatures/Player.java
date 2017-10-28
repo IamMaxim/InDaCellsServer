@@ -12,7 +12,5 @@ public class Player extends Human {
     @Override
     public void tick() {
         super.tick();
-
-//        System.out.println("ticking player " + name);
     }
 }

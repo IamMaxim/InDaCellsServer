@@ -3,12 +3,19 @@ package ru.iammaxim.InDaCellsServer.Items;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class Item {
+    public static HashMap<Integer, ItemArmor> armors = new HashMap<>();
 
     public final int id;
     public final String name;
     public final Type type;
+
+
+    public static void registerArmors() {
+        armors.put(0, new ItemArmor(0, "TestArmor", 1));
+    }
 
     public Item(int id, Type type, String name) {
         this.id = id;
