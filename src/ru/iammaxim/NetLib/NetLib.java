@@ -13,10 +13,13 @@ public class NetLib {
     private static final HashMap<String, Client> clients = new HashMap<>();
     private static HashMap<Integer, Class<? extends Packet>> packets = new HashMap<>();
     private static HashMap<Class<? extends Packet>, Integer> packetIds = new HashMap<>();
+    private static Runnable onClientConnect;
 
     public static void register(int id, Class<? extends Packet> packet) {
         packets.put(id, packet);
         packetIds.put(packet, id);
+
+        System.out.println("Registered packet " + packet.getName() + "with id " + id);
     }
 
     public static void registerAll() {
@@ -34,7 +37,7 @@ public class NetLib {
         ss = new ServerSocket(port);
         new Thread(() -> {
             new Thread(NetLib::loop).start();
-            System.out.println("Starting acceptor loop...");
+            System.out.println("Starting acceptor loop on server side...");
             while (true) {
                 try {
                     Socket s = ss.accept();
@@ -79,7 +82,7 @@ public class NetLib {
     }
 
     private static void loop() {
-        System.out.println("Starting receiver loop...");
+        System.out.println("Starting packet receiver loop...");
         while (true) {
             synchronized (clients) {
                 for (Client c : clients.values()) {
