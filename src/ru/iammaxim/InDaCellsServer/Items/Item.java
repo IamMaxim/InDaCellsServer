@@ -33,18 +33,18 @@ public class Item {
     }
 
     public static void registerWeapons(){
-        registerWeapon(new ItemWeapon(0, Type.WEAPON, "Дрын", 1, 3));
-        registerWeapon(new ItemWeapon(1, Type.WEAPON, "Дубина с гвоздями", 2, 4));
-        registerWeapon(new ItemWeapon(2, Type.WEAPON, "Лук", 2, 3));
-        registerWeapon(new ItemWeapon(3, Type.WEAPON, "Полицейская дубина", 2, 1));
-        registerWeapon(new ItemWeapon(4, Type.WEAPON, "Полицейский пистолет", 3, 2));
-        registerWeapon(new ItemWeapon(5, Type.WEAPON, "Полицейское ружьё", 8, 8));
-        registerWeapon(new ItemWeapon(6, Type.WEAPON, "М14", 4, 5));
-        registerWeapon(new ItemWeapon(7, Type.WEAPON, "Пистолет из мусора", 2, 3));
-        registerWeapon(new ItemWeapon(8, Type.WEAPON, "Охотночье ружьё с мусора", 3, 6));
-        registerWeapon(new ItemWeapon(9, Type.WEAPON, "Кухонный нож", 1, 1));
-        registerWeapon(new ItemWeapon(10, Type.WEAPON, "Боевой нож", 2, 2));
-        registerWeapon(new ItemWeapon(11, Type.WEAPON, "Меч из музея", 3, 2));
+        registerWeapon(new ItemWeapon(0, "Дрын", 1, 3));
+        registerWeapon(new ItemWeapon(1, "Дубина с гвоздями", 2, 4));
+        registerWeapon(new ItemWeapon(2, "Лук", 2, 3));
+        registerWeapon(new ItemWeapon(3, "Полицейская дубина", 2, 1));
+        registerWeapon(new ItemWeapon(4, "Полицейский пистолет", 3, 2));
+        registerWeapon(new ItemWeapon(5, "Полицейское ружьё", 8, 8));
+        registerWeapon(new ItemWeapon(6, "М14", 4, 5));
+        registerWeapon(new ItemWeapon(7,"Пистолет из мусора", 2, 3));
+        registerWeapon(new ItemWeapon(8, "Охотночье ружьё с мусора", 3, 6));
+        registerWeapon(new ItemWeapon(9, "Кухонный нож", 1, 1));
+        registerWeapon(new ItemWeapon(10, "Боевой нож", 2, 2));
+        registerWeapon(new ItemWeapon(11, "Меч из музея", 3, 2));
     }
 
     public static void registerArmor(ItemArmor armor){
