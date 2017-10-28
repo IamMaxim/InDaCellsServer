@@ -13,6 +13,7 @@ public class Item {
     public final int id;
     public final String name;
     public final Type type;
+    private int ID;
 
     public static void registerArmor(ItemArmor armor) {
         armors.put(armor.id, armor);
@@ -58,6 +59,10 @@ public class Item {
         );
 
         return item;
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public enum Type {

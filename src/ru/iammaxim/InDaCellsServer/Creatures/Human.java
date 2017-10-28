@@ -7,7 +7,7 @@ import ru.iammaxim.InDaCellsServer.World.World;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Human extends Creature implements Attacker {
+public class Human extends Creature {
     protected HashMap<Item.Type, Item> equippedItems = new HashMap<>();
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
@@ -46,12 +46,6 @@ public class Human extends Creature implements Attacker {
     public void addItem(Item item) {
         inventory.add(item);
         attachedQuests.forEach(q -> q.onItemAdd(item));
-    }
-
-    @Override
-    public void attack(Creature victim) {
-        // TODO: change to real value
-        victim.damage(1);
     }
 
     public float getHunger() {

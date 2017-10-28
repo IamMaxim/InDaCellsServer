@@ -8,14 +8,15 @@ import ru.iammaxim.InDaCellsServer.Items.Item;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class WorldCell {
     private int x, y;
     private String name = "Unnamed cell";
-    private ArrayList<Creature> creatures = new ArrayList<>();
-    private ArrayList<Activator> activators = new ArrayList<>();
-    private ArrayList<Item> items = new ArrayList<>();
+    private HashMap<Integer, Creature> creatures = new HashMap();
+    private HashMap<Integer, Activator> activators = new HashMap();
+    private HashMap<Integer, Item> items = new HashMap();
 
     public WorldCell() {
     }
@@ -38,15 +39,15 @@ public class WorldCell {
     }
 
     public void addCreature(Creature creature) {
-        creatures.add(creature);
+        creatures.put(creature.getID(), creature);
     }
 
     public void removeCreature(Creature creature) {
-        creatures.remove(creature);
+        creatures.remove(creature.getID());
     }
 
-    public ArrayList<Creature> getCreatures() {
-        return creatures;
+    public Collection<Creature> getCreatures() {
+        return creatures.values();
     }
 
     public void write(DataOutputStream dos) throws IOException {
@@ -55,17 +56,17 @@ public class WorldCell {
         dos.writeUTF(name);
 
         dos.writeInt(creatures.size());
-        for (Creature c : creatures) {
+        for (Creature c : creatures.values()) {
             c.write(dos);
         }
 
         dos.writeInt(activators.size());
-        for (Activator a : activators) {
+        for (Activator a : activators.values()) {
             a.write(dos);
         }
 
         dos.writeInt(items.size());
-        for (Item i : items) {
+        for (Item i : items.values()) {
             i.write(dos);
         }
     }
@@ -80,15 +81,18 @@ public class WorldCell {
 
         // TODO: CHECK THIS!
         for (int i = 0; i < dis.readInt(); i++) {
-            cell.creatures.add(Creature.read(dis));
+            Creature c = Creature.read(dis);
+            cell.creatures.put(c.getID(), c);
         }
 
         for (int i = 0; i < dis.readInt(); i++) {
-            cell.activators.add(Activator.read(dis));
+            Activator a = Activator.read(dis);
+            cell.activators.put(a.getID(), a);
         }
 
         for (int i = 0; i < dis.readInt(); i++) {
-            cell.items.add(Item.read(dis));
+            Item item = Item.read(dis);
+            cell.items.put(item.getID(), item);
         }
 
         return cell;
@@ -100,5 +104,13 @@ public class WorldCell {
 
     public int getX() {
         return x;
+    }
+
+    public Creature getCreature(int id) {
+        return creatures.get(id);
+    }
+
+    public Activator getActivator(int id) {
+        return activators.get(id);
     }
 }

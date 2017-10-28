@@ -12,4 +12,5 @@ public class MenuElement {
 
     public Type type;
     public String text;
+    public int targetID;
 }

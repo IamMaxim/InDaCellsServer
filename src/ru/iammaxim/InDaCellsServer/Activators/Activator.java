@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public class Activator {
     private String name;
+    private int ID;
 
     void activate(Human h) {
         System.out.println("Human " + h.getName() + " used activator");
@@ -27,5 +28,9 @@ public class Activator {
 
     public String getName() {
         return name;
+    }
+
+    public int getID() {
+        return ID;
     }
 }

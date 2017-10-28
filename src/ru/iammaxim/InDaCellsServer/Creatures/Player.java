@@ -8,17 +8,9 @@ import ru.iammaxim.NetLib.NetLib;
 import java.io.IOException;
 
 public class Player extends Human {
-    public enum State {
-        MOVING,
-        IDLE,
-        ACTIVATING,
-        ATTACKING,
-        DEFENDING
-    }
-
     protected int statsUpdateTimer = 0;
     protected int spTimer = 0;
-    protected State state;
+
 
     public Player(World world, String name) {
         super(world, name);
