@@ -7,14 +7,35 @@ import java.util.HashMap;
 
 public class Item {
     public static HashMap<Integer, ItemArmor> armors = new HashMap<>();
+    public static HashMap<Integer, ItemWeapon> weapons = new HashMap<>();
+    public static HashMap<Integer, ItemFood> foods = new HashMap<>();
 
     public final int id;
     public final String name;
     public final Type type;
 
+    public static void registerArmor(ItemArmor armor) {
+        armors.put(armor.id, armor);
+    }
+
+    public static void registerWeapon(ItemWeapon weapon) {
+        weapons.put(weapon.id, weapon);
+    }
+
+    public static void registerFood(ItemFood food) {
+        foods.put(food.id, food);
+    }
 
     public static void registerArmors() {
-        armors.put(0, new ItemArmor(0, "TestArmor", 1));
+        registerArmor(new ItemArmor(0, "TestArmor", 1));
+    }
+
+    public static void registerWeapons() {
+        registerWeapon(new ItemWeapon(1, "TestWeapon", 1));
+    }
+
+    public static void registerFoods() {
+        registerFood(new ItemFood(2, "TestFood", 1));
     }
 
     public Item(int id, Type type, String name) {
