@@ -4,22 +4,38 @@ package ru.iammaxim.InDaCellsServer.Creatures;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class Creature {
     protected int x = 0, y = 0;
     protected World world;
-    protected float HP;
+    protected float hp;
     protected boolean isAlive;
     protected String name;
     protected HashMap<Attribute, Float> attributes = new HashMap<>();
-    protected HashMap<Skill, Float> skils = new HashMap<>();
+    protected HashMap<Skill, Float> skills = new HashMap<>();
+
+    public Creature() {
+    }
 
     public Creature(World world, String name) {
         this.name = name;
         this.world = world;
 
         world.getCell(x, y).addCreature(this);
+    }
+
+    public Creature setWorld(World world) {
+        this.world = world;
+        return this;
+    }
+
+    public Creature setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public boolean move(int newX, int newY) {
@@ -53,12 +69,12 @@ public class Creature {
     }
 
     public float getHP() {
-        return HP;
+        return hp;
     }
 
     public void damage(float damage) {
-        this.HP -= damage;
-        if (this.HP <= 0)
+        this.hp -= damage;
+        if (this.hp <= 0)
             die();
     }
 
@@ -76,5 +92,26 @@ public class Creature {
 
     public WorldCell getCurrentCell() {
         return world.getCell(x, y);
+    }
+
+    public void write(DataOutputStream dos) throws IOException {
+        dos.writeUTF(name);
+        dos.writeInt(x);
+        dos.writeInt(y);
+        dos.writeFloat(hp);
+    }
+
+    public static Creature read(DataInputStream dis) throws IOException {
+        Creature creature = new Creature();
+        creature.name = dis.readUTF();
+        creature.x = dis.readInt();
+        creature.y = dis.readInt();
+        creature.hp = dis.readFloat();
+
+        return creature;
+    }
+
+    public String getName() {
+        return name;
     }
 }

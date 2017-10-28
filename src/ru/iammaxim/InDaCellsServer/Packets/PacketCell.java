@@ -1,36 +1,29 @@
 package ru.iammaxim.InDaCellsServer.Packets;
 
+import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.NetLib.Packet;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class PacketMove implements Packet {
-    public enum Direction {
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
+public class PacketCell implements Packet {
+    public WorldCell cell;
+
+    public PacketCell() {
     }
 
-    public Direction dir;
-
-    public PacketMove() {
-
-    }
-
-    public PacketMove(Direction dir) {
-        this.dir = dir;
+    public PacketCell(WorldCell cell) {
+        this.cell = cell;
     }
 
     @Override
     public void write(DataOutputStream dos) throws IOException {
-        dos.writeInt(dir.ordinal());
+        cell.write(dos);
     }
 
     @Override
     public void read(DataInputStream dis) throws IOException {
-        dir = Direction.values()[dis.readInt()];
+        cell = WorldCell.read(dis);
     }
 }
