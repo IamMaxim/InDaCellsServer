@@ -20,6 +20,7 @@ public class NetLib {
     public static void startServer(int port) throws IOException {
         ss = new ServerSocket(port);
         new Thread(() -> {
+            new Thread(NetLib::loop).start();
             System.out.println("Starting acceptor loop...");
             while (true) {
                 try {
@@ -76,7 +77,13 @@ public class NetLib {
 
                             byte[] arr = new byte[len];
                             c.dis.readFully(arr);
-                            packets.get(packetID).newInstance().read(new DataInputStream(new ByteArrayInputStream(arr)));
+
+                            Class<? extends Packet> p = packets.get(packetID);
+
+                            if (p == null)
+                                throw new IllegalStateException("No packet found with id " + packetID);
+
+                            p.newInstance().read(new DataInputStream(new ByteArrayInputStream(arr)));
                             System.out.println("Packet read from " + (c.name != null ? c.name : "Unknown name"));
                         }
                     } catch (IOException | IllegalAccessException | InstantiationException e) {
@@ -119,6 +126,6 @@ public class NetLib {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
+        }).start();
     }
 }
