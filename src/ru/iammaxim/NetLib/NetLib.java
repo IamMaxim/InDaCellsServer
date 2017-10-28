@@ -15,6 +15,7 @@ public class NetLib {
     private static HashMap<Integer, Class<? extends Packet>> packets = new HashMap<>();
     private static HashMap<Class<? extends Packet>, Integer> packetIds = new HashMap<>();
     private static Consumer<Client> onClientConnect;
+    private static Consumer<Packet> onPacketReceive;
 
     public static void register(int id, Class<? extends Packet> packet) {
         packets.put(id, packet);
@@ -103,7 +104,12 @@ public class NetLib {
                             if (p == null)
                                 throw new IllegalStateException("No packet found with id " + packetID);
 
-                            p.newInstance().read(new DataInputStream(new ByteArrayInputStream(arr)));
+                            Packet packet = p.newInstance();
+                            packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
+
+                            if (onPacketReceive != null)
+                                onPacketReceive.accept(packet);
+
                             System.out.println("Packet read from " + (c.name != null ? c.name : "Unknown name"));
                         }
                     } catch (IOException | IllegalAccessException | InstantiationException e) {
