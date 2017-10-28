@@ -11,31 +11,35 @@ import java.io.IOException;
 
 public class Server {
     public World world;
-    public static final long tickTimeNanos = 10000000;
+    public static final long tickTimeNanos = 10000000; // 0.01sec
+    public static final int startX = 0, startY = 0;
 
     public Server() {
         world = new World("World");
 
-        WorldCell cell = new WorldCell();
-        world.addCell(0, 0, cell);
-        Player p = new Player(world, "Player1");
-        cell.addCreature(p);
-        p.setMaxHP(10);
-        p.setMaxHunger(10);
-        p.setMaxSP(10);
+        for (int x = -10; x <= 10; x++)
+            for (int y = -10; y <= 10; y++) {
+                WorldCell cell = new WorldCell();
+                world.addCell(x, y, cell);
+            }
 
-        NetLib.setOnClientConnect((client -> {
+        NetLib.setOnClientConnect(c -> {
+            Player p = world.getPlayers().get(c.name);
+            // player is connecting first time
+            if (p == null) {
+                p = new Player(world, c.name);
+                p.setX(startX);
+                p.setY(startY);
+            }
+            p.maxHP();
+            p.maxSP();
+            p.maxHunger();
             try {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                NetLib.send(client.name, new PacketStats(p));
+                NetLib.send(c.name, new PacketStats(p));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }));
+        });
     }
 
     public void tick() {

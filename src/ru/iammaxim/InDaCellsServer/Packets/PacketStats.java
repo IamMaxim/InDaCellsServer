@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class PacketStats extends Packet {
     public float hp, hunger, sp;
+    public float maxHP, maxHunger, maxSP;
 
     public PacketStats() {
     }
@@ -24,6 +25,9 @@ public class PacketStats extends Packet {
         dos.writeFloat(hp);
         dos.writeFloat(hunger);
         dos.writeFloat(sp);
+        dos.writeFloat(maxHP);
+        dos.writeFloat(maxHunger);
+        dos.writeFloat(maxSP);
     }
 
     @Override
@@ -31,5 +35,8 @@ public class PacketStats extends Packet {
         hp = dis.readFloat();
         hunger = dis.readFloat();
         sp = dis.readFloat();
+        maxHP = dis.readFloat();
+        maxHunger = dis.readFloat();
+        maxSP = dis.readFloat();
     }
 }

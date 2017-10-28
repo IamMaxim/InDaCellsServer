@@ -118,4 +118,16 @@ public class Creature {
     public void setMaxHP(float maxHP) {
         this.maxHP = maxHP;
     }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void maxHP() {
+        hp = maxHP;
+    }
 }

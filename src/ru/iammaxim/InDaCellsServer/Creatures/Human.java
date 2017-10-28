@@ -1,9 +1,12 @@
 package ru.iammaxim.InDaCellsServer.Creatures;
 
 import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.World.World;
+import ru.iammaxim.NetLib.NetLib;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,6 +18,8 @@ public class Human extends Creature implements Attacker {
     protected float maxHunger;
     protected float sp;
     protected float maxSP;
+    protected int statsUpdateTimer = 0;
+    protected int spTimer = 0;
 
     public Human(World world, String name) {
         super(world, name);
@@ -29,6 +34,23 @@ public class Human extends Creature implements Attacker {
 
         sp += 0.01;
         sp = Math.min(hp, maxHP);
+
+        spTimer++;
+        if (spTimer == 500) {
+            spTimer = 0;
+            sp = 0;
+        }
+
+
+        statsUpdateTimer++;
+        if (statsUpdateTimer == 100) {
+            statsUpdateTimer = 0;
+            try {
+                NetLib.send(name, new PacketStats(this));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public HashMap<Item.Type, Item> getEquippedItems() {
@@ -64,5 +86,13 @@ public class Human extends Creature implements Attacker {
 
     public void setMaxSP(float maxSP) {
         this.maxSP = maxSP;
+    }
+
+    public void maxSP() {
+        sp = maxSP;
+    }
+
+    public void maxHunger() {
+        hunger = maxHunger;
     }
 }

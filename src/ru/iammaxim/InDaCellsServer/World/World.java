@@ -1,5 +1,7 @@
 package ru.iammaxim.InDaCellsServer.World;
 
+import ru.iammaxim.InDaCellsServer.Creatures.Player;
+
 import java.util.HashMap;
 
 public class World {
@@ -7,6 +9,7 @@ public class World {
 
     // {x, {y, cell}}
     private HashMap<Integer, HashMap<Integer, WorldCell>> cells = new HashMap<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
     public void addCell(int x, int y, WorldCell cell) {
         HashMap<Integer, WorldCell> row = cells.computeIfAbsent(x, k -> new HashMap<>());
@@ -43,5 +46,9 @@ public class World {
 
     public HashMap<Integer, HashMap<Integer, WorldCell>> getCells() {
         return cells;
+    }
+
+    public HashMap<String, Player> getPlayers() {
+        return players;
     }
 }
