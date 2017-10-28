@@ -9,6 +9,7 @@ public class Main {
         NetLib.registerAll();
         NetLib.startServer(23671);
         Server server = new Server();
+        server.startSaveThread();
         server.run();
     }
 }

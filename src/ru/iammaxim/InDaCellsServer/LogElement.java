@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class LogElement {
-    public enum Type{
+    public enum Type {
         INFO,
         MESSAGE
     }

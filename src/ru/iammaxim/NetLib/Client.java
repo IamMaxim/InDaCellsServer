@@ -16,7 +16,7 @@ public class Client {
         is = socket.getInputStream();
         os = socket.getOutputStream();
         dos = new DataOutputStream(os);
-        dis = new DataInputStream(is);
+        dis = new DataInputStream(new BufferedInputStream(is));
         if (hasName)
             name = dis.readUTF();
         System.out.println("Client connected. " + (name != null ? name : "unknown name"));

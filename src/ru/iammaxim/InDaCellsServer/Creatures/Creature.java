@@ -144,15 +144,19 @@ public class Creature {
     }
 
     public void defend() {
-        setState(State.DEFENDING, 0);
+        setState(State.DEFENDING, 200);
     }
 
     public void activate(int activatorID) {
-        setState(State.ACTIVATING, activatorID);
+        setState(State.ACTIVATING, 200);
+        actionTargetID = activatorID;
     }
 
     protected void doActivate() {
         Activator a = getCurrentCell().getActivator(actionTargetID);
+
+        if (a != null)
+            a.activate(this);
     }
 
     public WorldCell getCurrentCell() {

@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class NetLib {
@@ -27,6 +28,7 @@ public class NetLib {
     public static void registerAll() {
         int counter = 0;
 
+        register(counter++, PacketAddToLog.class);
         register(counter++, PacketAttributes.class);
         register(counter++, PacketCell.class);
         register(counter++, PacketDoAction.class);
@@ -95,12 +97,20 @@ public class NetLib {
             synchronized (clients) {
                 for (Client c : clients.values()) {
                     try {
-                        if (c.dis.available() >= 8) {
+                        if (c.dis.available() > 0) {
                             int packetID = c.dis.readInt();
                             int len = c.dis.readInt();
 
+                            System.out.println(packetID);
+                            System.out.println(len);
+
                             byte[] arr = new byte[len];
-                            c.dis.readFully(arr);
+                            if (len > 0) {
+                                c.dis.readFully(arr);
+                            }
+
+
+                            System.out.println(Arrays.toString(arr));
 
                             Class<? extends Packet> p = packets.get(packetID);
 
@@ -115,7 +125,7 @@ public class NetLib {
 
                             System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
                         }
-                    } catch (IOException | IllegalAccessException | InstantiationException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -133,10 +143,14 @@ public class NetLib {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             packet.write(new DataOutputStream(baos));
-            c.dos.writeInt(packetIds.get(packet.getClass()));
+            int packetID = packetIds.get(packet.getClass());
+            c.dos.writeInt(packetID);
             c.dos.writeInt(baos.size());
-            c.dos.write(baos.toByteArray());
-            System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
+            if (baos.size() > 0)
+                c.dos.write(baos.toByteArray(), 0, baos.size());
+
+            System.out.println("Packet " + packet.getClass().getSimpleName() + " (" + packetID + " " + baos.size() + ") written to " + (c.name != null ? c.name : "unknown client"));
+            System.out.println(Arrays.toString(baos.toByteArray()));
         } catch (SocketException e) {
             e.printStackTrace();
             clients.remove(c.name);

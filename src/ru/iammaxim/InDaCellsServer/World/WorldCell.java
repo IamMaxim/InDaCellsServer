@@ -96,17 +96,20 @@ public class WorldCell {
 
 
         // TODO: CHECK THIS!
-        for (int i = 0; i < dis.readInt(); i++) {
+        int creaturesCount = dis.readInt();
+        for (int i = 0; i < creaturesCount; i++) {
             Creature c = Creature.read(dis);
             cell.creatures.put(c.getID(), c);
         }
 
-        for (int i = 0; i < dis.readInt(); i++) {
+        int activatorsCount = dis.readInt();
+        for (int i = 0; i < activatorsCount; i++) {
             Activator a = Activator.read(dis);
             cell.activators.put(a.getID(), a);
         }
 
-        for (int i = 0; i < dis.readInt(); i++) {
+        int itemsCount = dis.readInt();
+        for (int i = 0; i < itemsCount; i++) {
             Item item = Item.read(dis);
             cell.items.put(item.getID(), item);
         }
@@ -145,5 +148,13 @@ public class WorldCell {
 
     public Collection<Activator> getActivators() {
         return activators.values();
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }

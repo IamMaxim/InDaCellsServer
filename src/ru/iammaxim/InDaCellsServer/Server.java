@@ -4,15 +4,13 @@ import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBusHandler;
-import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
-import ru.iammaxim.InDaCellsServer.Packets.PacketMove;
-import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
+import ru.iammaxim.InDaCellsServer.Packets.*;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.NetLib.Client;
 import ru.iammaxim.NetLib.NetLib;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,13 +23,25 @@ public class Server {
     public Server() {
         world = new World("World");
 
-        for (int x = -10; x <= 10; x++)
-            for (int y = -10; y <= 10; y++) {
-                WorldCell cell = new WorldCell();
-                world.addCell(x, y, cell);
-            }
+        boolean loaded = false;
+        try {
+            loaded = load("world.sav");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
+        // generate starting world
+        if (!loaded) {
+            System.out.println("No save found. Generating new world");
+
+            for (int x = -10; x <= 10; x++)
+                for (int y = -10; y <= 10; y++) {
+                    WorldCell cell = new WorldCell();
+                    world.addCell(x, y, cell);
+                }
+
+            world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
+        }
 
         NetLib.setOnClientConnect(c -> {
             Player p = world.getPlayers().get(c.name);
@@ -62,6 +72,11 @@ public class Server {
         });
 
         NetLib.setOnPacketReceive(NetBus::handle);
+
+        NetBus.register(PacketDoAction.class, (c, p) -> {
+            PacketDoAction packet = (PacketDoAction) p;
+            System.out.println("Gonna do action " + packet.type + " on " + packet.targetID);
+        });
 
         NetBus.register(PacketMove.class, (c, packet) -> {
             PacketMove p = (PacketMove) packet;
@@ -115,5 +130,46 @@ public class Server {
                 }
             }
         }
+    }
+
+    public void startSaveThread() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    save("world.sav");
+                    System.out.println("World saved.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void save(String filename) throws IOException {
+        File f = new File(filename);
+        if (!f.exists())
+            f.createNewFile();
+        else
+            f.renameTo(new File(filename + ".old"));
+
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream(f));
+        world.save(dos);
+        dos.close();
+    }
+
+    public boolean load(String filename) throws IOException {
+        File f = new File(filename);
+        if (!f.exists())
+            return false;
+
+        DataInputStream dis = new DataInputStream(new FileInputStream(f));
+        world.load(dis);
+        dis.close();
+        return true;
     }
 }

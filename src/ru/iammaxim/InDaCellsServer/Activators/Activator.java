@@ -1,5 +1,6 @@
 package ru.iammaxim.InDaCellsServer.Activators;
 
+import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Human;
 
 import java.io.DataInputStream;
@@ -17,8 +18,8 @@ public class Activator {
         this.name = name;
     }
 
-    void activate(Human h) {
-        System.out.println("Human " + h.getName() + " used activator");
+    public void activate(Creature c) {
+        System.out.println("Creature " + c.getName() + " used activator");
     }
 
     public void write(DataOutputStream dos) throws IOException {

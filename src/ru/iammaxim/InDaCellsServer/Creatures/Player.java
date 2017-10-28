@@ -55,7 +55,7 @@ public class Player extends Human {
         if (statsUpdateTimer == 50) {
             statsUpdateTimer = 0;
             try {
-                System.out.println("Sending stats: " + hp + " " + maxHP + ", " + sp + " " + maxSP + ", " + hunger + " " + maxHunger);
+//                System.out.println("Sending stats: " + hp + " " + maxHP + ", " + sp + " " + maxSP + ", " + hunger + " " + maxHunger);
                 NetLib.send(name, new PacketStats(this));
             } catch (Exception e) {
                 e.printStackTrace();
