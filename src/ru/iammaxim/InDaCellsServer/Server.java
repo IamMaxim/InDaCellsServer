@@ -2,6 +2,7 @@ package ru.iammaxim.InDaCellsServer;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
+import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
 import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
@@ -35,7 +36,7 @@ public class Server {
                 p.maxHP();
 
                 p.setMaxSP(10);
-                p.maxSP();
+//                p.maxSP();
 
                 p.setMaxHunger(10);
                 p.maxHunger();
@@ -45,6 +46,7 @@ public class Server {
             }
             try {
                 NetLib.send(c.name, new PacketStats(p));
+                NetLib.send(c.name, new PacketCell(p.getCurrentCell()));
             } catch (IOException e) {
                 e.printStackTrace();
             }

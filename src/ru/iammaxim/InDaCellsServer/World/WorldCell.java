@@ -3,11 +3,13 @@ package ru.iammaxim.InDaCellsServer.World;
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
+import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Items.Item;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -112,5 +114,22 @@ public class WorldCell {
 
     public Activator getActivator(int id) {
         return activators.get(id);
+    }
+
+    public ArrayList<Player> getPlayers() {
+        ArrayList<Player> players = new ArrayList<>();
+        creatures.values().forEach(c -> {
+            if (c instanceof Player)
+                players.add((Player) c);
+        });
+        return players;
+    }
+
+    public Collection<Item> getItems() {
+        return items.values();
+    }
+
+    public Collection<Activator> getActivators() {
+        return activators.values();
     }
 }

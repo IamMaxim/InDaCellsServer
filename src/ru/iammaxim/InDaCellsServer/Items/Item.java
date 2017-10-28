@@ -65,6 +65,10 @@ public class Item {
         return ID;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public enum Type {
         WEAPON,
         ARMOR,
