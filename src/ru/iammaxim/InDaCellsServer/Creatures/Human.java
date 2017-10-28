@@ -14,6 +14,8 @@ public class Human extends Creature implements Attacker {
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected float hunger;
     protected float maxSP;
+    protected int level;
+    protected float xp;
 
     public Human(World world, String name) {
         super(world, name);
@@ -40,7 +42,7 @@ public class Human extends Creature implements Attacker {
 
     public void addItem(Item item) {
         inventory.add(item);
-        attachedQuests.forEach(q -> q.onItemAdd(item));
+        attachedQuests.forEach(q -> q.getCurrentStage().onItemAdd(item));
     }
 
     @Override
@@ -53,11 +55,13 @@ public class Human extends Creature implements Attacker {
         return hunger;
     }
 
-    public void setMaxHunger(float hunger) {
-
-    }
+    public void setMaxHunger(float hunger) { }
 
     public void setMaxSP(float maxSP) {
         this.maxSP = maxSP;
+    }
+
+    public void addXp(float amount){
+        this.xp += amount;
     }
 }
