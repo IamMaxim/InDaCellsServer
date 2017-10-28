@@ -26,6 +26,11 @@ public class Server {
 
         NetLib.setOnClientConnect((client -> {
             try {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 NetLib.send(client.name, new PacketStats(p));
             } catch (IOException e) {
                 e.printStackTrace();

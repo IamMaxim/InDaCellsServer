@@ -73,6 +73,7 @@ public class NetLib {
             try {
                 server = new Client(new Socket(ip, port), false);
                 server.dos.writeUTF(name);
+                clients.put(null, server);
                 loop();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -125,7 +126,7 @@ public class NetLib {
         c.dos.writeInt(packetIds.get(packet.getClass()));
         c.dos.writeInt(baos.size());
         c.dos.write(baos.toByteArray());
-        System.out.println("Packet written");
+        System.out.println("Packet written to " + (c.name != null ? c.name : "unknown client"));
     }
 
     public static void send(String name, Packet packet) throws IOException {

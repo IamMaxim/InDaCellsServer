@@ -19,6 +19,6 @@ public class Client {
         dis = new DataInputStream(is);
         if (hasName)
             name = dis.readUTF();
-        System.out.println("Client connected. " + (name != null ? name : ""));
+        System.out.println("Client connected. " + (name != null ? name : "unknown name"));
     }
 }
