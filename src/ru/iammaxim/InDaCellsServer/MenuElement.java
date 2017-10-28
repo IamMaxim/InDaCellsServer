@@ -6,7 +6,8 @@ public class MenuElement {
         ITEM,
         HUMAN,
         CREATURE,
-        ACTIVATOR
+        ACTIVATOR,
+        HEADER
     }
 
     public Type type;
