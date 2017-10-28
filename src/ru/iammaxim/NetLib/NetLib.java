@@ -60,6 +60,10 @@ public class NetLib {
         }).start();
     }
 
+    public static Client server() {
+        return server;
+    }
+
     private static void loop() {
         System.out.println("Starting receiver loop...");
         while (true) {

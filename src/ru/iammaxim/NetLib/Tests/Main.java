@@ -15,5 +15,6 @@ public class Main {
             NetLib.sendToServer(new TestPacket());
             System.out.println("Packet sent");
         }
+        NetLib.server().dos.writeUTF("TESTNAME");
     }
 }

@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class Human extends Creature implements Attacker {
     protected float SP;
-    protected HashMap<Item.Slot, Item> equippedItems = new HashMap<>();
+    protected HashMap<Item.Type, Item> equippedItems = new HashMap<>();
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
 
@@ -24,7 +24,7 @@ public class Human extends Creature implements Attacker {
         SP += 1;
     }
 
-    public HashMap<Item.Slot, Item> getEquippedItems() {
+    public HashMap<Item.Type, Item> getEquippedItems() {
         return equippedItems;
     }
 
