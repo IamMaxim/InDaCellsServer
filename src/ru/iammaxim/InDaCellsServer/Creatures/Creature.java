@@ -2,6 +2,7 @@ package ru.iammaxim.InDaCellsServer.Creatures;
 
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
+import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
 import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
@@ -19,8 +20,8 @@ public class Creature {
     protected boolean isAlive;
     protected String name;
     protected State state = State.IDLE;
-    protected int actionCounter = 0;
-    protected int maxActionCounter = 200;
+    protected int actionCounter = -1;
+    protected int maxActionCounter = -1;
     protected int newX, newY;
     protected int actionTargetID = -1;
     protected int id;
@@ -66,6 +67,7 @@ public class Creature {
 
         if (this instanceof Player)
             try {
+                NetLib.send(name, new PacketCell(getCurrentCell()));
                 NetLib.send(name, new PacketUnblockInput());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -73,6 +75,7 @@ public class Creature {
     }
 
     public void move(int newX, int newY) {
+        System.out.println("Gonna move");
         setState(State.MOVING, 200);
         this.newX = newX;
         this.newY = newY;
@@ -123,6 +126,7 @@ public class Creature {
 
     public void tick() {
         if (actionCounter != -1) {
+            System.out.println("Ticking");
             if (actionCounter == maxActionCounter) {
                 if (state == State.MOVING) {
                     doMove();

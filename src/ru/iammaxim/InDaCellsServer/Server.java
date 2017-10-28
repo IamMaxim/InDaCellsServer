@@ -13,6 +13,8 @@ import ru.iammaxim.NetLib.Client;
 import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Server {
     public World world;
@@ -84,9 +86,23 @@ public class Server {
     public void tick() {
 //        System.out.println("Tick()");
 
-        world.getCells().forEach((x, row) -> row.forEach((y, cell) -> {
-            cell.getCreatures().forEach(Creature::tick);
-        }));
+        synchronized (world.getCells()) {
+            Iterator<Integer> it1 = world.getCells().keySet().iterator();
+
+            while (it1.hasNext()) {
+                HashMap<Integer, WorldCell> row = world.getCells().get(it1.next());
+                Iterator<Integer> it2 = row.keySet().iterator();
+                while (it2.hasNext()) {
+                    WorldCell cell = row.get(it2.next());
+
+                    Iterator<Creature> it = cell.getCreatures().iterator();
+                    while (it.hasNext()) {
+                        it.next().tick();
+                    }
+
+                }
+            }
+        }
     }
 
     public void run() {
