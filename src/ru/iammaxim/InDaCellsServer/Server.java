@@ -43,6 +43,7 @@ public class Server {
             }
 
             WorldCreator.create(world);
+            WorldCreator.createDescriptions(world);
         }
     }
 
