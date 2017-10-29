@@ -32,6 +32,7 @@ public class Creature {
     protected int maxActionCounter = -1;
     protected int newX, newY;
     protected int actionTargetID = -1;
+    protected int additionalInt = -1;
     protected int id;
     protected Type type;
 
@@ -83,6 +84,11 @@ public class Creature {
             ((Human) creature).maxHunger = dis.readFloat();
             ((Human) creature).sp = dis.readFloat();
             ((Human) creature).maxSP = dis.readFloat();
+
+            int invSize = dis.readInt();
+            for (int i = 0; i < invSize; i++) {
+                ((Human) creature).inventory.add(Item.read(dis));
+            }
         }
 
         return creature;
@@ -151,7 +157,7 @@ public class Creature {
         return hp;
     }
 
-    public void damage(float damage) {
+    public void damage(float damage, int mode) {
         this.hp -= damage;
         if (this.hp <= 0)
             die();
@@ -277,7 +283,7 @@ public class Creature {
             return;
 
         // TODO: change to real value
-        victim.damage(1);
+        victim.damage(1, additionalInt);
 
         try {
             NetLib.send(name, new PacketUnblockInput());
@@ -286,9 +292,10 @@ public class Creature {
         }
     }
 
-    public void attack(int targetID) {
+    public void attack(int targetID, int mode) {
         setState(State.ATTACKING, 100);
         actionTargetID = targetID;
+        additionalInt = mode;
     }
 
     public enum State {

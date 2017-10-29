@@ -7,7 +7,7 @@ public class Scripts {
         switch (id) {
             case 0: // 0,0 Push me
                 return h -> {
-                    h.damage(5);
+                    h.damage(5, 0);
                 };
             case 1: // 0, -1 Spawn item
                 return h -> {

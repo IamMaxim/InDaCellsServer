@@ -10,12 +10,15 @@ import java.io.IOException;
 public class PacketInventoryChange extends Packet {
     public enum Type {
         ADD,
-        REMOVE
+        UNEQUIP,
+        REMOVE,
+        EQUIP
     }
 
     public Type type;
     public int index;
     public Item item;
+    public Item.Type slot;
 
     public PacketInventoryChange() {
     }
@@ -30,6 +33,11 @@ public class PacketInventoryChange extends Packet {
         this.item = item;
     }
 
+    public PacketInventoryChange(Type type, Item.Type slot) {
+        this.type = type;
+        this.slot = slot;
+    }
+
     @Override
     public void write(DataOutputStream dos) throws IOException {
         dos.writeInt(type.ordinal());
@@ -38,6 +46,11 @@ public class PacketInventoryChange extends Packet {
             dos.writeInt(index);
         else if (type == Type.ADD)
             item.write(dos);
+        else if (type == Type.EQUIP) {
+            dos.writeInt(slot.ordinal());
+            dos.writeInt(index);
+        } else if (type == Type.UNEQUIP)
+            dos.writeInt(slot.ordinal());
     }
 
     @Override
@@ -48,5 +61,10 @@ public class PacketInventoryChange extends Packet {
             index = dis.readInt();
         else if (type == Type.ADD)
             item = Item.read(dis);
+        else if (type == Type.EQUIP) {
+            slot = Item.Type.values()[dis.readInt()];
+            index = dis.readInt();
+        } else if (type == Type.UNEQUIP)
+            slot = Item.Type.values()[dis.readInt()];
     }
 }
