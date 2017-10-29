@@ -2,6 +2,8 @@ package ru.iammaxim.InDaCellsServer.Creatures;
 
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
+import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
 import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
@@ -11,8 +13,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Creature {
+    public enum Type {
+        CREATURE,
+        NPC,
+        PLAYER
+    }
+
     protected int x = 0, y = 0;
     protected World world;
 
@@ -21,28 +30,64 @@ public class Creature {
     protected boolean isAlive;
     protected String name;
     protected State state = State.IDLE;
-    protected int actionCounter = 0;
-    protected int maxActionCounter = 200;
+    protected int actionCounter = -1;
+    protected int maxActionCounter = -1;
     protected int newX, newY;
     protected int actionTargetID = -1;
     protected int id;
+    protected Type type;
 
-    public Creature(){
-
+    public Creature() {
+        if (this instanceof Player)
+            type = Type.PLAYER;
+        else if (this instanceof NPC)
+            type = Type.NPC;
+        else
+            type = Type.CREATURE;
     }
 
     public Creature(World world, String name) {
+        this();
         this.name = name;
         this.world = world;
-
-        world.getCell(x, y).addCreature(this);
+        id = (int) (Math.random() * Integer.MAX_VALUE);
+//        world.getCell(x, y).addCreature(this);
     }
 
-    public Creature(World world, String name, float hp, float attack) {
-        this(world, name);
-        this.maxHP = hp;
-        this.hp = hp;
-        this.attack = attack;
+    public static Creature read(World world, DataInputStream dis) throws IOException {
+        Type type = Type.values()[dis.readInt()];
+        int id = dis.readInt();
+        String name = dis.readUTF();
+        Creature creature = null;
+
+        switch (type) {
+            case CREATURE:
+                creature = new Creature(world, name);
+                break;
+            case NPC:
+                creature = new NPC(world, name);
+                break;
+            case PLAYER:
+                creature = new Player(world, name);
+                break;
+        }
+
+        creature.type = type;
+        creature.id = id;
+        creature.name = name;
+        creature.x = dis.readInt();
+        creature.y = dis.readInt();
+        creature.hp = dis.readFloat();
+        creature.maxHP = dis.readFloat();
+
+        if (creature instanceof Human) {
+            ((Human) creature).hunger = dis.readFloat();
+            ((Human) creature).maxHunger = dis.readFloat();
+            ((Human) creature).sp = dis.readFloat();
+            ((Human) creature).maxSP = dis.readFloat();
+        }
+
+        return creature;
     }
 
     public static Creature read(DataInputStream dis) throws IOException {
@@ -51,6 +96,14 @@ public class Creature {
         creature.x = dis.readInt();
         creature.y = dis.readInt();
         creature.hp = dis.readFloat();
+        creature.maxHP = dis.readFloat();
+
+        if (creature instanceof Human) {
+            ((Human) creature).hunger = dis.readFloat();
+            ((Human) creature).maxHunger = dis.readFloat();
+            ((Human) creature).sp = dis.readFloat();
+            ((Human) creature).maxSP = dis.readFloat();
+        }
 
         return creature;
     }
@@ -59,7 +112,7 @@ public class Creature {
         return id;
     }
 
-    private void doMove() {
+    protected void doMove() {
         WorldCell oldCell = world.getCell(x, y);
         WorldCell newCell = world.getCell(newX, newY);
 
@@ -75,6 +128,7 @@ public class Creature {
 
         if (this instanceof Player)
             try {
+                NetLib.send(name, new PacketCell(getCurrentCell()));
                 NetLib.send(name, new PacketUnblockInput());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -82,7 +136,8 @@ public class Creature {
     }
 
     public void move(int newX, int newY) {
-        state = State.MOVING;
+        System.out.println("Gonna move");
+        setState(State.MOVING, 200);
         this.newX = newX;
         this.newY = newY;
     }
@@ -141,6 +196,8 @@ public class Creature {
                     doAttack();
                 } else if (state == State.DEFENDING) {
                     // just reset state, we don't need to do something
+                } else if (state == State.PICKING_UP) {
+                    doPickup();
                 }
                 state = State.IDLE;
                 actionCounter = -1;
@@ -149,16 +206,46 @@ public class Creature {
         }
     }
 
+    private void doPickup() {
+        Iterator<Item> it = getCurrentCell().getItems().iterator();
+
+        while (it.hasNext()) {
+            Item i = it.next();
+
+            if (i.getID() == actionTargetID) {
+                getCurrentCell().removeItem(i);
+                world.getPlayer(name).addItem(i);
+                break;
+            }
+        }
+
+        try {
+            NetLib.send(name, new PacketUnblockInput());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void defend() {
-        setState(State.DEFENDING, 0);
+        setState(State.DEFENDING, 200);
     }
 
     public void activate(int activatorID) {
-        setState(State.ACTIVATING, activatorID);
+        setState(State.ACTIVATING, 100);
+        actionTargetID = activatorID;
     }
 
-    private void doActivate() {
+    protected void doActivate() {
         Activator a = getCurrentCell().getActivator(actionTargetID);
+
+        if (a != null)
+            a.activate(this);
+
+        try {
+            NetLib.send(name, new PacketUnblockInput());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public float getAttack() {
@@ -170,10 +257,13 @@ public class Creature {
     }
 
     public void write(DataOutputStream dos) throws IOException {
+        dos.writeInt(type.ordinal());
+        dos.writeInt(id);
         dos.writeUTF(name);
         dos.writeInt(x);
         dos.writeInt(y);
         dos.writeFloat(hp);
+        dos.writeFloat(maxHP);
     }
 
     public String getName() {
@@ -203,11 +293,21 @@ public class Creature {
         return state;
     }
 
-    private void doAttack() {
+    protected void doAttack() {
         Creature victim = getCurrentCell().getCreature(actionTargetID);
+
+        // check if victim already left cell
+        if (victim == null)
+            return;
 
         // TODO: change to real value
         victim.damage(1);
+
+        try {
+            NetLib.send(name, new PacketUnblockInput());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void attack(int targetID) {
@@ -220,6 +320,7 @@ public class Creature {
         IDLE,
         ACTIVATING,
         ATTACKING,
+        PICKING_UP,
         DEFENDING
     }
 }

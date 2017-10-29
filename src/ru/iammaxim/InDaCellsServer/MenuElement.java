@@ -18,6 +18,8 @@ public class MenuElement {
 
     public String text;
     public int targetID;
+    public float additionalFloat = 0;
+    public String additionalString = "";
 
     public MenuElement(Type type, String text, int targetID) {
         this.type = type;
@@ -25,10 +27,22 @@ public class MenuElement {
         this.targetID = targetID;
     }
 
+    public MenuElement setAdditionalFloat(float f) {
+        this.additionalFloat = f;
+        return this;
+    }
+
+    public MenuElement setAdditionalString(String s) {
+        this.additionalString = s;
+        return this;
+    }
+
     public void write(DataOutputStream dos) throws IOException {
         dos.writeInt(type.ordinal());
         dos.writeUTF(text);
         dos.writeInt(targetID);
+        dos.writeFloat(additionalFloat);
+        dos.writeUTF(additionalString);
     }
 
     public static MenuElement read(DataInputStream dis) throws IOException {
@@ -36,6 +50,7 @@ public class MenuElement {
                 Type.values()[dis.readInt()],
                 dis.readUTF(),
                 dis.readInt()
-        );
+        ).setAdditionalFloat(dis.readFloat())
+                .setAdditionalString(dis.readUTF());
     }
 }

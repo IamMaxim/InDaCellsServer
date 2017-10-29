@@ -10,6 +10,7 @@ public class Client {
     public DataOutputStream dos;
     public DataInputStream dis;
     public String name;
+    public final Object lock = new Object();
 
     public Client(Socket socket, boolean hasName) throws IOException {
         this.socket = socket;

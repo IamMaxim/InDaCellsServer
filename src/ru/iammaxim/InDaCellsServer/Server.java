@@ -1,14 +1,22 @@
 package ru.iammaxim.InDaCellsServer;
 
+import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
-import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
-import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
+import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
+import ru.iammaxim.InDaCellsServer.NetBus.NetBusHandler;
+import ru.iammaxim.InDaCellsServer.Packets.*;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
+import ru.iammaxim.NetLib.Client;
 import ru.iammaxim.NetLib.NetLib;
+import ru.iammaxim.NetLib.Packet;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Server {
     public World world;
@@ -17,13 +25,50 @@ public class Server {
 
     public Server() {
         world = new World("World");
+        initHandlers();
 
-        for (int x = -10; x <= 10; x++)
-            for (int y = -10; y <= 10; y++) {
-                WorldCell cell = new WorldCell();
-                world.addCell(x, y, cell);
+        boolean loaded = false;
+        try {
+            loaded = load("world.sav");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // generate starting world
+        if (!loaded) {
+            System.out.println("No save found. Generating new world");
+
+            for (int x = -10; x <= 10; x++)
+                for (int y = -10; y <= 10; y++) {
+                    WorldCell cell = new WorldCell();
+                    world.addCell(x, y, cell);
+                }
+
+            world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
+            world.getCell(0, 1).addActivator(new Activator(0, "Push me!").setDescription("Push me! Harder, harder!"));
+            world.getCell(0, -1).addActivator(new Activator(1, "Spawn an item").setDescription("Push me and you'll se a very beautiful thing it front of ya"));
+        }
+
+
+    }
+
+    public void tick() {
+//        System.out.println("Tick()");
+
+        ArrayList<Creature> creatures = new ArrayList<>();
+        synchronized (world.getCells()) {
+            for (Integer integer1 : world.getCells().keySet()) {
+                HashMap<Integer, WorldCell> row = world.getCells().get(integer1);
+                for (Integer integer : row.keySet()) {
+                    WorldCell cell = row.get(integer);
+                    creatures.addAll(cell.getCreatures());
+                }
             }
+        }
+        creatures.forEach(Creature::tick);
+    }
 
+    private void initHandlers() {
         NetLib.setOnClientConnect(c -> {
             Player p = world.getPlayers().get(c.name);
             // player is connecting first time
@@ -51,14 +96,79 @@ public class Server {
                 e.printStackTrace();
             }
         });
-    }
 
-    public void tick() {
-//        System.out.println("Tick()");
+        NetLib.setOnPacketReceive(NetBus::handle);
 
-        world.getCells().forEach((x, row) -> row.forEach((y, cell) -> {
-            cell.getCreatures().forEach(Creature::tick);
-        }));
+        NetBus.register(PacketDoAction.class, (Client c, Packet p) -> {
+            PacketDoAction packet = (PacketDoAction) p;
+            System.out.println("Gonna do action " + packet.type + " on " + packet.targetID);
+
+            try {
+                switch (((PacketDoAction) p).type) {
+                    case ATTACK:
+                        world.getPlayer(c.name).attack(((PacketDoAction) p).targetID);
+                        NetLib.send(c.name, new PacketStartAction("Attacking...", 1));
+                        break;
+                    case DEFEND:
+                        world.getPlayer(c.name).defend();
+                        NetLib.send(c.name, new PacketStartAction("Defending...", 2));
+                        break;
+                    case ACTIVATE:
+                        world.getPlayer(c.name).activate(((PacketDoAction) p).targetID);
+                        NetLib.send(c.name, new PacketStartAction("Activating...", 1));
+                        break;
+                    case PICKUP_ITEM:
+                        world.getPlayer(c.name).pickup(((PacketDoAction) p).targetID);
+                        NetLib.send(c.name, new PacketStartAction("Picking up...", 0.5f));
+                        break;
+                    case TALK:
+                        break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        NetBus.register(PacketMove.class, (c, packet) -> {
+            PacketMove p = (PacketMove) packet;
+            Player player = world.getPlayer(c.name);
+
+            switch (p.dir) {
+                case LEFT:
+                    player.move(player.getX() - 1, player.getY());
+                    break;
+                case RIGHT:
+                    player.move(player.getX() + 1, player.getY());
+                    break;
+                case UP:
+                    player.move(player.getX(), player.getY() + 1);
+                    break;
+                case DOWN:
+                    player.move(player.getX(), player.getY() - 1);
+                    break;
+            }
+        });
+
+        NetBus.register(PacketSendMessage.class, (client, packet) -> {
+            PacketSendMessage message = (PacketSendMessage) packet;
+            Player player = world.getPlayer(client.name);
+
+            for (int x = player.getX() - 1; x <= player.getX() + 1; x++) {
+                for (int y = player.getY() - 1; y <= player.getY() + 1; y++) {
+                    WorldCell cell = world.getCell(x, y);
+                    if (cell != null) {
+                        try {
+                            for (Player player1 : cell.getPlayers()) {
+                                NetLib.send(player1.getName(), new PacketAddToLog(
+                                        new LogElement(LogElement.Type.MESSAGE, message.message, player.getName())));
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public void run() {
@@ -76,5 +186,46 @@ public class Server {
                 }
             }
         }
+    }
+
+    public void startSaveThread() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    save("world.sav");
+                    System.out.println("World saved.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void save(String filename) throws IOException {
+        File f = new File(filename);
+        if (!f.exists())
+            f.createNewFile();
+        else
+            f.renameTo(new File(filename + ".old"));
+
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream(f));
+        world.save(dos);
+        dos.close();
+    }
+
+    public boolean load(String filename) throws IOException {
+        File f = new File(filename);
+        if (!f.exists())
+            return false;
+
+        DataInputStream dis = new DataInputStream(new FileInputStream(f));
+        world.load(dis);
+        dis.close();
+        return true;
     }
 }

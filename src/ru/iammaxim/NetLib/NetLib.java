@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class NetLib {
@@ -27,6 +28,7 @@ public class NetLib {
     public static void registerAll() {
         int counter = 0;
 
+        register(counter++, PacketAddToLog.class);
         register(counter++, PacketAttributes.class);
         register(counter++, PacketCell.class);
         register(counter++, PacketDoAction.class);
@@ -36,6 +38,7 @@ public class NetLib {
         register(counter++, PacketStartAction.class);
         register(counter++, PacketStats.class);
         register(counter++, PacketUnblockInput.class);
+        register(counter++, PacketSendMessage.class);
     }
 
     public static void startServer(int port) throws IOException {
@@ -94,29 +97,33 @@ public class NetLib {
         while (true) {
             synchronized (clients) {
                 for (Client c : clients.values()) {
-                    try {
-                        if (c.dis.available() > 8) {
-                            int packetID = c.dis.readInt();
-                            int len = c.dis.readInt();
+                    synchronized (c.lock) {
+                        try {
+                            if (c.dis.available() > 0) {
+                                int packetID = c.dis.readInt();
+                                int len = c.dis.readInt();
 
-                            byte[] arr = new byte[len];
-                            c.dis.readFully(arr);
+                                byte[] arr = new byte[len];
+                                if (len > 0) {
+                                    c.dis.readFully(arr);
+                                }
 
-                            Class<? extends Packet> p = packets.get(packetID);
+                                Class<? extends Packet> p = packets.get(packetID);
 
-                            if (p == null)
-                                throw new IllegalStateException("No packet found with id " + packetID);
+                                if (p == null)
+                                    throw new IllegalStateException("No packet found with id " + packetID);
 
-                            Packet packet = p.newInstance();
-                            packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
+                                Packet packet = p.newInstance();
+                                packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
 
-                            if (onPacketReceive != null)
-                                onPacketReceive.onPacketReceive(packet);
+                                if (onPacketReceive != null)
+                                    onPacketReceive.onPacketReceive(c, packet);
 
-                            System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
+                                System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (IOException | IllegalAccessException | InstantiationException e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -130,16 +137,21 @@ public class NetLib {
     }
 
     private static void send(Client c, Packet packet) throws IOException {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            packet.write(new DataOutputStream(baos));
-            c.dos.writeInt(packetIds.get(packet.getClass()));
-            c.dos.writeInt(baos.size());
-            c.dos.write(baos.toByteArray());
-            System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
-        } catch (SocketException e) {
-            e.printStackTrace();
-            clients.remove(c.name);
+        synchronized (c.lock) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                packet.write(new DataOutputStream(baos));
+                int packetID = packetIds.get(packet.getClass());
+                c.dos.writeInt(packetID);
+                c.dos.writeInt(baos.size());
+                if (baos.size() > 0)
+                    c.dos.write(baos.toByteArray());
+
+                System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
+            } catch (SocketException e) {
+                e.printStackTrace();
+                clients.remove(c.name);
+            }
         }
     }
 
@@ -148,9 +160,10 @@ public class NetLib {
         synchronized (clients) {
             c = clients.get(name);
         }
-        if (c == null)
-            throw new IllegalArgumentException("No such name found while sending packet");
-        send(c, packet);
+        if (c != null)
+            send(c, packet);
+//        else
+//            throw new IllegalArgumentException("No such name found while sending packet");
     }
 
     public static void sendToServer(Packet packet) {

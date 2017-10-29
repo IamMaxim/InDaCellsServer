@@ -30,36 +30,46 @@ public class PacketCell extends Packet {
 
         elements.add(new MenuElement(MenuElement.Type.HEADER, "Игроки", 0));
 
-        cell.getCreatures().forEach(c -> {
-            if (c instanceof Player)
-                elements.add(new MenuElement(MenuElement.Type.PLAYER, c.getName(), c.getID()));
-        });
+        synchronized (cell.getCreatures()) {
+            cell.getCreatures().forEach(c -> {
+                if (c instanceof Player)
+                    elements.add(new MenuElement(MenuElement.Type.PLAYER, c.getName(), c.getID()).setAdditionalFloat(c.getHP()));
+            });
+        }
 
         elements.add(new MenuElement(MenuElement.Type.HEADER, "NPC", 0));
 
-        cell.getCreatures().forEach(c -> {
-            if (c instanceof NPC)
-                elements.add(new MenuElement(MenuElement.Type.NPC, c.getName(), c.getID()));
-        });
+        synchronized (cell.getCreatures()) {
+            cell.getCreatures().forEach(c -> {
+                if (c instanceof NPC)
+                    elements.add(new MenuElement(MenuElement.Type.NPC, c.getName(), c.getID()).setAdditionalFloat(c.getHP()));
+            });
+        }
 
         elements.add(new MenuElement(MenuElement.Type.HEADER, "Существа", 0));
 
-        cell.getCreatures().forEach(c -> {
-            if (!(c instanceof Player) && !(c instanceof NPC))
-                elements.add(new MenuElement(MenuElement.Type.CREATURE, c.getName(), c.getID()));
-        });
+        synchronized (cell.getCreatures()) {
+            cell.getCreatures().forEach(c -> {
+                if (!(c instanceof Player) && !(c instanceof NPC))
+                    elements.add(new MenuElement(MenuElement.Type.CREATURE, c.getName(), c.getID()).setAdditionalFloat(c.getHP()));
+            });
+        }
 
         elements.add(new MenuElement(MenuElement.Type.HEADER, "Предметы", 0));
 
-        cell.getItems().forEach(i -> {
-            elements.add(new MenuElement(MenuElement.Type.ITEM, i.getName(), i.getID()));
-        });
+        synchronized (cell.getItems()) {
+            cell.getItems().forEach(i -> {
+                elements.add(new MenuElement(MenuElement.Type.ITEM, i.getName(), i.getID()).setAdditionalString(i.getDescription()));
+            });
+        }
 
         elements.add(new MenuElement(MenuElement.Type.HEADER, "Активаторы", 0));
 
-        cell.getActivators().forEach(a -> {
-            elements.add(new MenuElement(MenuElement.Type.ACTIVATOR, a.getName(), a.getID()));
-        });
+        synchronized (cell.getActivators()) {
+            cell.getActivators().forEach(a -> {
+                elements.add(new MenuElement(MenuElement.Type.ACTIVATOR, a.getName(), a.getID()).setAdditionalString(a.getDescription()));
+            });
+        }
     }
 
     @Override

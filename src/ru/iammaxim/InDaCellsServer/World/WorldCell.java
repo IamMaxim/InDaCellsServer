@@ -5,6 +5,8 @@ import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
+import ru.iammaxim.NetLib.NetLib;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -40,12 +42,24 @@ public class WorldCell {
         else return "Cell";
     }
 
+    public void update() {
+        getPlayers().forEach(p -> new Thread(() -> {
+            try {
+                NetLib.send(p.getName(), new PacketCell(this));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start());
+    }
+
     public void addCreature(Creature creature) {
         creatures.put(creature.getID(), creature);
+        update();
     }
 
     public void removeCreature(Creature creature) {
         creatures.remove(creature.getID());
+        update();
     }
 
     public Collection<Creature> getCreatures() {
@@ -73,29 +87,35 @@ public class WorldCell {
         }
     }
 
-    public static WorldCell read(DataInputStream dis) throws IOException {
+    public static WorldCell read(World world, DataInputStream dis) throws IOException {
         WorldCell cell = new WorldCell();
 
         cell.x = dis.readInt();
         cell.y = dis.readInt();
         cell.name = dis.readUTF();
 
-
-        // TODO: CHECK THIS!
-        for (int i = 0; i < dis.readInt(); i++) {
-            Creature c = Creature.read(dis);
+        int creaturesCount = dis.readInt();
+        for (int i = 0; i < creaturesCount; i++) {
+            Creature c = Creature.read(world, dis);
             cell.creatures.put(c.getID(), c);
         }
 
-        for (int i = 0; i < dis.readInt(); i++) {
+        int activatorsCount = dis.readInt();
+        for (int i = 0; i < activatorsCount; i++) {
             Activator a = Activator.read(dis);
             cell.activators.put(a.getID(), a);
         }
 
-        for (int i = 0; i < dis.readInt(); i++) {
+        int itemsCount = dis.readInt();
+        for (int i = 0; i < itemsCount; i++) {
             Item item = Item.read(dis);
+            System.out.println("Putting item with ID: " + item.getID());
             cell.items.put(item.getID(), item);
         }
+
+        cell.getPlayers().forEach(p -> {
+            world.addPlayer(p.getName(), p);
+        });
 
         return cell;
     }
@@ -131,5 +151,34 @@ public class WorldCell {
 
     public Collection<Activator> getActivators() {
         return activators.values();
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void removeItem(Item i) {
+        items.remove(i.getID());
+        update();
+    }
+
+    public void addItem(Item i) {
+        System.out.println("Adding item with id " + i.getID());
+        items.put(i.getID(), i);
+        update();
+    }
+
+    public void addActivator(Activator a) {
+        activators.put(a.getID(), a);
+        update();
+    }
+
+    public void removeActivator(Activator a) {
+        activators.remove(a.getID());
+        update();
     }
 }
