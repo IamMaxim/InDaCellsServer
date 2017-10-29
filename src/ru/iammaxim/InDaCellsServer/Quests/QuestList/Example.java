@@ -1,6 +1,7 @@
 package ru.iammaxim.InDaCellsServer.Quests.QuestList;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
+import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.Creatures.Mobs.Hedgehog;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.NPCs.TimTrasher;
@@ -16,18 +17,18 @@ public class Example extends Quest {
             private int rightNow = 0;
 
             @Override
-            public void onKill(Creature c) {
+            public void onKill(Human p, Creature c) {
                 Creature hedgehog = new Hedgehog(world);
                 if (c.equals(hedgehog)) rightNow++;
                 if (rightNow == needed) done();
             }
 
             @Override
-            public void onItemAdd(Item i) {
+            public void onItemAdd(Human p, Item i) {
             }
 
             @Override
-            public void onTalk(NPC h) {
+            public void onTalk(Human p, NPC h) {
             }
         });
         this.addStage(new Stage(this, "Тестовый собирающий квест") {
@@ -36,33 +37,34 @@ public class Example extends Quest {
             private Item neededItem = Item.items.get(0);
 
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
                 if (item.equals(neededItem)) rightNow++;
                 if (rightNow == needed) done();
             }
 
             @Override
-            public void onTalk(NPC n) {
+            public void onTalk(Human p, NPC n) {
             }
 
             @Override
-            public void onKill(Creature c) {
+            public void onKill(Human p, Creature c) {
             }
         });
+
         this.addStage(new Stage(this, "Desc") {
             private NPC neededNPC = new TimTrasher();
 
             @Override
-            public void onTalk(NPC npc) {
+            public void onTalk(Human p, NPC npc) {
                 if (npc.equals(neededNPC)) done();
             }
 
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
             }
 
             @Override
-            public void onKill(Creature creature) {
+            public void onKill(Human p, Creature creature) {
             }
         });
     }

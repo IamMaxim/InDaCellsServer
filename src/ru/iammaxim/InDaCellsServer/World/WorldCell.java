@@ -3,6 +3,7 @@ package ru.iammaxim.InDaCellsServer.World;
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
+import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
@@ -181,5 +182,9 @@ public class WorldCell {
     public void removeActivator(Activator a) {
         activators.remove(a.getID());
         update();
+    }
+
+    public NPC getNPC(int targetID) {
+        return (NPC) creatures.get(targetID);
     }
 }
