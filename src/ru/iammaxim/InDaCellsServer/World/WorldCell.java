@@ -73,6 +73,7 @@ public class WorldCell {
         dos.writeInt(x);
         dos.writeInt(y);
         dos.writeUTF(name);
+        dos.writeUTF(description);
 
         dos.writeInt(creatures.size());
         for (Creature c : creatures.values()) {
@@ -96,6 +97,7 @@ public class WorldCell {
         cell.x = dis.readInt();
         cell.y = dis.readInt();
         cell.name = dis.readUTF();
+        cell.description = dis.readUTF();
 
         int creaturesCount = dis.readInt();
         for (int i = 0; i < creaturesCount; i++) {

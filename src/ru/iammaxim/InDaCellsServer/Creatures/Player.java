@@ -67,6 +67,9 @@ public class Player extends Human {
     public void talk(int targetID) {
         WorldCell cell = getCurrentCell();
         NPC npc = cell.getNPC(targetID);
+        npc.speak(this, "Здравствуй, путник!");
+        npc.sendQuests(this);
+        //send packet to client
     }
 
     @Override
