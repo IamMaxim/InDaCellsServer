@@ -1,11 +1,11 @@
 package ru.iammaxim.InDaCellsServer.Quests.QuestList;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
+import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.Creatures.Mobs.Dog;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.NPCs.JoCaptain;
 import ru.iammaxim.InDaCellsServer.Items.Item;
-import ru.iammaxim.InDaCellsServer.Items.ItemWeapon;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.Quests.QuestLines;
 import ru.iammaxim.InDaCellsServer.Quests.Stage;
@@ -20,19 +20,19 @@ public class PeaceMakersDogs extends Quest {
         _DOG = new Dog(world);
         addStage(new Stage(this, QuestLines._talk_with + _JO.getName()) {
             @Override
-            public void onTalk(NPC npc) {
+            public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_JO)) {
-                    _JO.speak(QuestLines.peacemakers_jo_dogs_intro);
+                    _JO.speak(p, QuestLines.peacemakers_jo_dogs_intro);
                     done();
                 }
             }
 
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
             }
 
             @Override
-            public void onKill(Creature creature) {
+            public void onKill(Human p, Creature creature) {
             }
         });
         addStage(new Stage(this, QuestLines._kill + _DOG.getName()) {
@@ -40,35 +40,35 @@ public class PeaceMakersDogs extends Quest {
             private int rightNow = 0;
 
             @Override
-            public void onKill(Creature creature) {
+            public void onKill(Human p, Creature creature) {
                 if (creature.equals(_DOG)) rightNow++;
                 if (rightNow == amount) done();
             }
 
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
             }
 
             @Override
-            public void onTalk(NPC npc) {
+            public void onTalk(Human p, NPC npc) {
             }
         });
 
         addStage(new Stage(this, QuestLines._go_back + _JO.getName()) {
             @Override
-            public void onTalk(NPC npc) {
+            public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_JO)) {
-                    _JO.speak(QuestLines.peacemakers_jo_dogs_finish);
+                    _JO.speak(p, QuestLines.peacemakers_jo_dogs_finish);
                     done();
                 }
             }
 
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
             }
 
             @Override
-            public void onKill(Creature creature) {
+            public void onKill(Human p, Creature creature) {
             }
         });
     }

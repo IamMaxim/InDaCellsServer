@@ -8,6 +8,7 @@ import ru.iammaxim.InDaCellsServer.Packets.PacketStartAction;
 import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
 import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
 import ru.iammaxim.InDaCellsServer.World.World;
+import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
@@ -61,6 +62,11 @@ public class Player extends Human {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void talk(int targetID) {
+        WorldCell cell = getCurrentCell();
+        NPC npc = cell.getNPC(targetID);
     }
 
     @Override

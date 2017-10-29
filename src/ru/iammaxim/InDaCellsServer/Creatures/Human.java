@@ -70,7 +70,7 @@ public class Human extends Creature {
 
     public void addItem(Item item) {
         inventory.add(item);
-        attachedQuests.forEach(q -> q.getCurrentStage().onItemAdd(item));
+        attachedQuests.forEach(q -> q.getCurrentStage().onItemAdd(this, item));
     }
 
     public void removeItem(Item item) {

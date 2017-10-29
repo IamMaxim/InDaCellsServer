@@ -1,6 +1,7 @@
 package ru.iammaxim.InDaCellsServer.Quests.QuestList;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
+import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.NPCs.RammCrusher;
 import ru.iammaxim.InDaCellsServer.Items.Item;
@@ -17,53 +18,53 @@ public class RaidersRammsWeapon extends Quest {
         super(title);
         addStage(new Stage(this, QuestLines._talk_with + _RAMM.getName()) {
             @Override
-            public void onTalk(NPC npc) {
+            public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_RAMM)) {
-                    _RAMM.speak(QuestLines.raiders_ramms_weapon_intro);
+                    _RAMM.speak(p, QuestLines.raiders_ramms_weapon_intro);
                     done();
                 }
             }
 
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
             }
 
             @Override
-            public void onKill(Creature creature) {
+            public void onKill(Human p, Creature creature) {
             }
         });
         addStage(new Stage(this, QuestLines._find + _RAMMS_WEAPON.getName()) {
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
                 if (item.equals(_RAMMS_WEAPON)) {
                     done();
                 }
             }
 
             @Override
-            public void onTalk(NPC npc) {
+            public void onTalk(Human p, NPC npc) {
             }
 
             @Override
-            public void onKill(Creature creature) {
+            public void onKill(Human p, Creature creature) {
             }
         });
 
         addStage(new Stage(this, QuestLines._go_back + _RAMM.getName()) {
             @Override
-            public void onTalk(NPC npc) {
+            public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_RAMM)) {
-                    _RAMM.speak(QuestLines.raiders_ramms_weapon_finish);
+                    _RAMM.speak(p, QuestLines.raiders_ramms_weapon_finish);
                     done();
                 }
             }
 
             @Override
-            public void onItemAdd(Item item) {
+            public void onItemAdd(Human p, Item item) {
             }
 
             @Override
-            public void onKill(Creature creature) {
+            public void onKill(Human p, Creature creature) {
             }
         });
     }
