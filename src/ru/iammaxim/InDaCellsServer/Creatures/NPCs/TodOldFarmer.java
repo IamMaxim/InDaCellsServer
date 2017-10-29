@@ -4,7 +4,7 @@ import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.World.World;
 
 public class TodOldFarmer extends NPC {
-    public TodOldFarmer() {
-        super(new World("World"), "Тод, старый фермер");
+    public TodOldFarmer(World world) {
+        super(world, "Тод, старый фермер");
     }
 }
