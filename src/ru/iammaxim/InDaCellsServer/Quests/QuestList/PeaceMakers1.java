@@ -24,6 +24,7 @@ public class PeaceMakers1 extends Quest {
         _ROY = new RoyFirstMarshal(world);
         _TOD = new TodOldFarmer(world);
         _BOMJ = new Beggar(world);
+
         addStage(new Stage(this, QuestLines._talk_with) {
             @Override
             public void onTalk(Human p, NPC npc) {

@@ -12,12 +12,15 @@ import ru.iammaxim.InDaCellsServer.Quests.Stage;
 import ru.iammaxim.InDaCellsServer.World.World;
 
 public class PeaceMakersDogs extends Quest {
-    private final NPC _JO = new JoCaptain();
+    private final NPC _JO;
     private final Creature _DOG;
 
     public PeaceMakersDogs(World world, String title) {
         super(title);
+
+        _JO = new JoCaptain(world);
         _DOG = new Dog(world);
+
         addStage(new Stage(this, QuestLines._talk_with + _JO.getName()) {
             @Override
             public void onTalk(Human p, NPC npc) {

@@ -9,13 +9,18 @@ import ru.iammaxim.InDaCellsServer.Items.ItemWeapon;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.Quests.QuestLines;
 import ru.iammaxim.InDaCellsServer.Quests.Stage;
+import ru.iammaxim.InDaCellsServer.World.World;
 
 public class RaidersRammsWeapon extends Quest {
-    private final NPC _RAMM = new RammCrusher();
-    private final ItemWeapon _RAMMS_WEAPON = Item.weapons.get(1);
+    private final NPC _RAMM;
+    private final ItemWeapon _RAMMS_WEAPON;
 
-    public RaidersRammsWeapon(String title) {
+    public RaidersRammsWeapon(World world, String title) {
         super(title);
+
+        _RAMM = new RammCrusher(world);
+        _RAMMS_WEAPON = Item.weapons.get(1);
+
         addStage(new Stage(this, QuestLines._talk_with + _RAMM.getName()) {
             @Override
             public void onTalk(Human p, NPC npc) {
