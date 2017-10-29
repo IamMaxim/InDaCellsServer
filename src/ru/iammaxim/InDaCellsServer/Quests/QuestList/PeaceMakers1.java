@@ -13,13 +13,16 @@ import ru.iammaxim.InDaCellsServer.Quests.Stage;
 import ru.iammaxim.InDaCellsServer.World.World;
 
 public class PeaceMakers1 extends Quest {
-    private final NPC _ROY = new RoyFirstMarshal();
-    private final NPC _TOD = new TodOldFarmer();
+    private final NPC _ROY;
+    private final NPC _TOD;
 
     private final Creature _BOMJ; //lul
 
     public PeaceMakers1(World world, String title) {
         super(title);
+
+        _ROY = new RoyFirstMarshal(world);
+        _TOD = new TodOldFarmer(world);
         _BOMJ = new Beggar(world);
         addStage(new Stage(this, QuestLines._talk_with) {
             @Override

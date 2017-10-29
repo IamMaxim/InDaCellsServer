@@ -9,14 +9,16 @@ import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.Quests.QuestLines;
 import ru.iammaxim.InDaCellsServer.Quests.Stage;
+import ru.iammaxim.InDaCellsServer.World.World;
 
 public class Raiders1 extends Quest {
 
-    private final NPC _GEORG = new GeorgRaidersLeader();
+    private final NPC _GEORG;
     private final NPC _TIM = new TimTrasher();
 
-    public Raiders1(String title) {
+    public Raiders1(World world, String title) {
         super(title);
+        _GEORG = new GeorgRaidersLeader(world);
         addStage(new Stage(this, QuestLines._talk_with + _GEORG.getName()) {
             @Override
             public void onTalk(Human p, NPC npc) {

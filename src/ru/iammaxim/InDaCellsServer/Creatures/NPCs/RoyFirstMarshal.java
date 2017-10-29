@@ -4,7 +4,7 @@ import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.World.World;
 
 public class RoyFirstMarshal extends NPC {
-    public RoyFirstMarshal() {
-        super(new World("World"), "Рой Томпсон, Первый маршалл.");
+    public RoyFirstMarshal(World world) {
+        super(world, "Рой Томпсон, Первый маршалл.");
     }
 }
