@@ -38,6 +38,7 @@ public class NetLib {
         register(counter++, PacketStartAction.class);
         register(counter++, PacketStats.class);
         register(counter++, PacketUnblockInput.class);
+        register(counter++, PacketSendMessage.class);
     }
 
     public static void startServer(int port) throws IOException {
