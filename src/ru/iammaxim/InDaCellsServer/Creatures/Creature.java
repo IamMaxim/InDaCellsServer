@@ -14,6 +14,12 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class Creature {
+    public enum Type {
+        CREATURE,
+        NPC,
+        PLAYER
+    }
+
     protected int x = 0, y = 0;
     protected World world;
     protected float hp, maxHP;
@@ -25,21 +31,46 @@ public class Creature {
     protected int newX, newY;
     protected int actionTargetID = -1;
     protected int id;
+    protected Type type;
 
     public Creature() {
+        if (this instanceof Player)
+            type = Type.PLAYER;
+        else if (this instanceof NPC)
+            type = Type.NPC;
+        else
+            type = Type.CREATURE;
     }
 
     public Creature(World world, String name) {
+        this();
         this.name = name;
         this.world = world;
         id = (int) (Math.random() * Integer.MAX_VALUE);
 //        world.getCell(x, y).addCreature(this);
     }
 
-    public static Creature read(DataInputStream dis) throws IOException {
-        Creature creature = new Creature();
-        creature.id = dis.readInt();
-        creature.name = dis.readUTF();
+    public static Creature read(World world, DataInputStream dis) throws IOException {
+        Type type = Type.values()[dis.readInt()];
+        int id = dis.readInt();
+        String name = dis.readUTF();
+        Creature creature = null;
+
+        switch (type) {
+            case CREATURE:
+                creature = new Creature(world, name);
+                break;
+            case NPC:
+                creature = new NPC(world, name);
+                break;
+            case PLAYER:
+                creature = new Player(world, name);
+                break;
+        }
+
+        creature.type = type;
+        creature.id = id;
+        creature.name = name;
         creature.x = dis.readInt();
         creature.y = dis.readInt();
         creature.hp = dis.readFloat();
@@ -164,6 +195,7 @@ public class Creature {
     }
 
     public void write(DataOutputStream dos) throws IOException {
+        dos.writeInt(type.ordinal());
         dos.writeInt(id);
         dos.writeUTF(name);
         dos.writeInt(x);

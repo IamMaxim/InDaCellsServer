@@ -33,7 +33,7 @@ public class PacketCell extends Packet {
         synchronized (cell.getCreatures()) {
             cell.getCreatures().forEach(c -> {
                 if (c instanceof Player)
-                    elements.add(new MenuElement(MenuElement.Type.PLAYER, c.getName(), c.getID()));
+                    elements.add(new MenuElement(MenuElement.Type.PLAYER, c.getName(), c.getID()).setAdditionalFloat(c.getHP()));
             });
         }
 
@@ -42,7 +42,7 @@ public class PacketCell extends Packet {
         synchronized (cell.getCreatures()) {
             cell.getCreatures().forEach(c -> {
                 if (c instanceof NPC)
-                    elements.add(new MenuElement(MenuElement.Type.NPC, c.getName(), c.getID()));
+                    elements.add(new MenuElement(MenuElement.Type.NPC, c.getName(), c.getID()).setAdditionalFloat(c.getHP()));
             });
         }
 
@@ -51,7 +51,7 @@ public class PacketCell extends Packet {
         synchronized (cell.getCreatures()) {
             cell.getCreatures().forEach(c -> {
                 if (!(c instanceof Player) && !(c instanceof NPC))
-                    elements.add(new MenuElement(MenuElement.Type.CREATURE, c.getName(), c.getID()));
+                    elements.add(new MenuElement(MenuElement.Type.CREATURE, c.getName(), c.getID()).setAdditionalFloat(c.getHP()));
             });
         }
 
@@ -59,7 +59,7 @@ public class PacketCell extends Packet {
 
         synchronized (cell.getItems()) {
             cell.getItems().forEach(i -> {
-                elements.add(new MenuElement(MenuElement.Type.ITEM, i.getName(), i.getID()));
+                elements.add(new MenuElement(MenuElement.Type.ITEM, i.getName(), i.getID()).setAdditionalString(i.getDescription()));
             });
         }
 
@@ -67,7 +67,7 @@ public class PacketCell extends Packet {
 
         synchronized (cell.getActivators()) {
             cell.getActivators().forEach(a -> {
-                elements.add(new MenuElement(MenuElement.Type.ACTIVATOR, a.getName(), a.getID()));
+                elements.add(new MenuElement(MenuElement.Type.ACTIVATOR, a.getName(), a.getID()).setAdditionalString(a.getDescription()));
             });
         }
     }

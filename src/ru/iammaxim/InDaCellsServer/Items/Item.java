@@ -13,6 +13,12 @@ public class Item {
     public final int id;
     public final String name;
     public final Type type;
+    private String description = "";
+
+    public Item setDescription(String s) {
+        this.description = s;
+        return this;
+    }
 
     public static void registerItem(Item item) {
         items.put(item.id, item);
@@ -87,6 +93,10 @@ public class Item {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public enum Type {

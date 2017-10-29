@@ -10,8 +10,14 @@ import java.io.IOException;
 public class Activator {
     private String name;
     private int id;
+    private String description = "";
 
     public Activator() {
+    }
+
+    public Activator setDescription(String s) {
+        this.description = s;
+        return this;
     }
 
     public Activator(String name) {
@@ -42,5 +48,9 @@ public class Activator {
 
     public int getID() {
         return id;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -87,7 +87,7 @@ public class WorldCell {
         }
     }
 
-    public static WorldCell read(DataInputStream dis) throws IOException {
+    public static WorldCell read(World world, DataInputStream dis) throws IOException {
         WorldCell cell = new WorldCell();
 
         cell.x = dis.readInt();
@@ -98,7 +98,7 @@ public class WorldCell {
         // TODO: CHECK THIS!
         int creaturesCount = dis.readInt();
         for (int i = 0; i < creaturesCount; i++) {
-            Creature c = Creature.read(dis);
+            Creature c = Creature.read(world, dis);
             cell.creatures.put(c.getID(), c);
         }
 

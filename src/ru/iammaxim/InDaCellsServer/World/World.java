@@ -75,7 +75,7 @@ public class World {
 
         synchronized (cells) {
             for (int i = 0; i < count; i++) {
-                WorldCell cell = WorldCell.read(dis);
+                WorldCell cell = WorldCell.read(this, dis);
                 addCell(cell.getX(), cell.getY(), cell);
             }
         }
