@@ -7,12 +7,14 @@ import ru.iammaxim.InDaCellsServer.Packets.PacketInventoryChange;
 import ru.iammaxim.InDaCellsServer.Packets.PacketStartAction;
 import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
 import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
+import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 public class Player extends Human {
     protected int statsUpdateTimer = 0;
@@ -68,7 +70,7 @@ public class Player extends Human {
         WorldCell cell = getCurrentCell();
         NPC npc = cell.getNPC(targetID);
         npc.speak(this, "Здравствуй, путник!");
-        npc.sendQuests(this);
+        npc.sendQuestsToClient(this);
         //send packet to client
     }
 

@@ -5,6 +5,7 @@ import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
 import ru.iammaxim.InDaCellsServer.Packets.*;
+import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.InDaCellsServer.World.WorldCreator;
@@ -25,6 +26,8 @@ public class Server {
         world = new World("World");
         initHandlers();
 
+        Quest.registerQuests(world);
+
         boolean loaded = false;
         try {
             loaded = load("world.sav");
@@ -43,7 +46,8 @@ public class Server {
                 }
             }
 
-            WorldCreator.create(world);
+            WorldCreator.createNPCs(world);
+            WorldCreator.createMobs(world);
             WorldCreator.createDescriptions(world);
 
             // debug things

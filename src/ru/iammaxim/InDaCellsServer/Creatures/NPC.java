@@ -8,6 +8,7 @@ import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NPC extends Human {
     private ArrayList<Quest> attachedQuests = new ArrayList<>();
@@ -15,6 +16,7 @@ public class NPC extends Human {
     public NPC(World world, String name) {
         super(world, name);
     }
+
 
     public void speak(Human p, String text) {
         try {
@@ -24,13 +26,21 @@ public class NPC extends Human {
         }
     }
 
+    public NPC attachQuest(Quest q){
+        this.attachedQuests.add(q);
 
-    public void sendQuests(Human p) {
-        if (attachedQuests.isEmpty()) return;
+        return this;
+    }
+
+    public void sendQuestsToClient(Human p) {
+        // TODO: Пакет, айдишник
+
+        if(attachedQuests.isEmpty()) return;
         try {
             NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, "Квесты", name)));
-            for (Quest quest : attachedQuests) {
+            for (Quest quest : attachedQuests){
                 NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, quest.getTitle(), name)));
+
             }
         } catch (IOException e) {
             e.printStackTrace();
