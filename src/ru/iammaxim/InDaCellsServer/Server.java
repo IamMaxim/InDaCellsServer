@@ -92,6 +92,7 @@ public class Server {
             try {
                 NetLib.send(c.name, new PacketStats(p));
                 NetLib.send(c.name, new PacketCell(p.getCurrentCell()));
+                NetLib.send(c.name, new PacketInventory(p.getInventory()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -106,7 +107,7 @@ public class Server {
             try {
                 switch (((PacketDoAction) p).type) {
                     case ATTACK:
-                        world.getPlayer(c.name).attack(((PacketDoAction) p).targetID);
+                        world.getPlayer(c.name).attack(((PacketDoAction) p).targetID, 0);
                         NetLib.send(c.name, new PacketStartAction("Attacking...", 1));
                         break;
                     case DEFEND:

@@ -1,7 +1,9 @@
 package ru.iammaxim.InDaCellsServer.Creatures;
 
 
+import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
+import ru.iammaxim.InDaCellsServer.Packets.PacketInventoryChange;
 import ru.iammaxim.InDaCellsServer.Packets.PacketStartAction;
 import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
 import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
@@ -18,6 +20,26 @@ public class Player extends Human {
 
     public Player(World world, String name) {
         super(world, name);
+    }
+
+    @Override
+    public void addItem(Item item) {
+        super.addItem(item);
+        try {
+            NetLib.send(name, new PacketInventoryChange(PacketInventoryChange.Type.ADD, item));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void removeItem(int index) {
+        super.removeItem(index);
+        try {
+            NetLib.send(name, new PacketInventoryChange(PacketInventoryChange.Type.REMOVE, index));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -1,38 +1,33 @@
 package ru.iammaxim.InDaCellsServer.Quests;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
-import ru.iammaxim.InDaCellsServer.Creatures.Human;
+import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Items.Item;
 
-public class Stage {
+public abstract class Stage {
     private String description;
     private State state;
+
     private Quest attachedQuest;
 
-    public Stage(Quest attachedQuest, String desc) {
+    public Stage(Quest attachedQuest, String desc){
         this.attachedQuest = attachedQuest;
         this.description = desc;
         this.state = State.CLOSED;
     }
 
-    public Stage(Quest attachedQuest, String desc, State state) {
+    public Stage(Quest attachedQuest, String desc, State state){
         this(attachedQuest, desc);
         this.state = state;
     }
 
-    public void onItemAdd(Item item) {
+    public abstract void onItemAdd(Item item);
 
-    }
+    public abstract void onTalk(NPC npc);
 
-    public void onTalk(Human human) {
+    public abstract void onKill(Creature creature);
 
-    }
-
-    public void onKill(Creature creature) {
-
-    }
-
-    public void done() {
+    public void done(){
         this.state = State.FINISHED;
         this.getAttachedQuest().reevaluate();
     }
@@ -45,7 +40,7 @@ public class Stage {
         return attachedQuest;
     }
 
-    enum State {
+    enum State{
         CLOSED,
         IN_PROGRESS,
         FINISHED

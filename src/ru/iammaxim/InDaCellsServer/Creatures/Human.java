@@ -1,8 +1,10 @@
 package ru.iammaxim.InDaCellsServer.Creatures;
 
 import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.Packets.PacketInventoryChange;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.World.World;
+import ru.iammaxim.NetLib.NetLib;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,7 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class Human extends Creature {
-    protected HashMap<Item.Type, Item> equippedItems = new HashMap<>();
+    protected HashMap<Item.Type, Integer> equippedItems = new HashMap<>();
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected HashMap<Attribute, Float> attributes = new HashMap<>();
@@ -35,7 +37,7 @@ public class Human extends Creature {
         sp = Math.min(sp, maxSP);
     }
 
-    public HashMap<Item.Type, Item> getEquippedItems() {
+    public HashMap<Item.Type, Integer> getEquippedItems() {
         return equippedItems;
     }
 
@@ -51,6 +53,15 @@ public class Human extends Creature {
         dos.writeFloat(maxHunger);
         dos.writeFloat(sp);
         dos.writeFloat(maxSP);
+
+        dos.writeInt(inventory.size());
+        inventory.forEach(i -> {
+            try {
+                i.write(dos);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public float getSP() {
@@ -60,6 +71,32 @@ public class Human extends Creature {
     public void addItem(Item item) {
         inventory.add(item);
         attachedQuests.forEach(q -> q.getCurrentStage().onItemAdd(item));
+    }
+
+    public void removeItem(Item item) {
+        removeItem(inventory.indexOf(item));
+    }
+
+    public void removeItem(int index) {
+        Iterator<Item.Type> it = equippedItems.keySet().iterator();
+
+        while (it.hasNext()) {
+            Item.Type slot = it.next();
+            int i = equippedItems.get(slot);
+            if (index == i) {
+                equippedItems.remove(slot);
+
+                if (this instanceof Player) {
+                    try {
+                        NetLib.send(name, new PacketInventoryChange(PacketInventoryChange.Type.UNEQUIP, slot));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        inventory.remove(index);
     }
 
     public float getHunger() {

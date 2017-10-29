@@ -12,7 +12,6 @@ import ru.iammaxim.NetLib.NetLib;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 
 public class Creature {
@@ -29,15 +28,18 @@ public class Creature {
     protected float attack;
     protected boolean isAlive;
     protected String name;
+    protected float attack;
     protected State state = State.IDLE;
     protected int actionCounter = -1;
     protected int maxActionCounter = -1;
     protected int newX, newY;
     protected int actionTargetID = -1;
+    protected int additionalInt = -1;
     protected int id;
     protected Type type;
 
     public Creature() {
+        this.attack = 1;
         if (this instanceof Player)
             type = Type.PLAYER;
         else if (this instanceof NPC)
@@ -52,6 +54,8 @@ public class Creature {
         this.world = world;
         id = (int) (Math.random() * Integer.MAX_VALUE);
 //        world.getCell(x, y).addCreature(this);
+
+        world.getCell(x, y).addCreature(this);
     }
 
     public static Creature read(World world, DataInputStream dis) throws IOException {
@@ -85,6 +89,11 @@ public class Creature {
             ((Human) creature).maxHunger = dis.readFloat();
             ((Human) creature).sp = dis.readFloat();
             ((Human) creature).maxSP = dis.readFloat();
+
+            int invSize = dis.readInt();
+            for (int i = 0; i < invSize; i++) {
+                ((Human) creature).inventory.add(Item.read(dis));
+            }
         }
 
         return creature;
@@ -171,7 +180,7 @@ public class Creature {
         return hp;
     }
 
-    public void damage(float damage) {
+    public void damage(float damage, int mode) {
         this.hp -= damage;
         if (this.hp <= 0)
             die();
@@ -301,7 +310,7 @@ public class Creature {
             return;
 
         // TODO: change to real value
-        victim.damage(1);
+        victim.damage(1, additionalInt);
 
         try {
             NetLib.send(name, new PacketUnblockInput());
@@ -310,9 +319,10 @@ public class Creature {
         }
     }
 
-    public void attack(int targetID) {
+    public void attack(int targetID, int mode) {
         setState(State.ATTACKING, 100);
         actionTargetID = targetID;
+        additionalInt = mode;
     }
 
     public enum State {

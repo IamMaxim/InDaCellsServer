@@ -31,6 +31,7 @@ public class NetLib {
         register(counter++, PacketAddToLog.class);
         register(counter++, PacketAttributes.class);
         register(counter++, PacketCell.class);
+        register(counter++, PacketCraft.class);
         register(counter++, PacketDoAction.class);
         register(counter++, PacketInventory.class);
         register(counter++, PacketInventoryChange.class);
