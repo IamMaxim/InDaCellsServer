@@ -1,6 +1,7 @@
 package ru.iammaxim.InDaCellsServer;
 
 import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;

@@ -18,8 +18,8 @@ public class PeaceMakers1 extends Quest {
 
     private final Creature _BOMJ; //lul
 
-    public PeaceMakers1(World world, String title) {
-        super(title);
+    public PeaceMakers1(int id, World world, String title) {
+        super(id, title);
 
         _ROY = new RoyFirstMarshal(world);
         _TOD = new TodOldFarmer(world);
@@ -30,7 +30,7 @@ public class PeaceMakers1 extends Quest {
             public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_ROY)) {
                     _ROY.speak(p, QuestLines.peacemakers_1_intro);
-                    done();
+                    done(p);
                 }
             }
 
@@ -49,7 +49,7 @@ public class PeaceMakers1 extends Quest {
             @Override
             public void onKill(Human p, Creature creature) {
                 if (creature.equals(_BOMJ)) rightNow++;
-                if (rightNow == amount) done();
+                if (rightNow == amount) done(p);
             }
 
             @Override
@@ -65,7 +65,7 @@ public class PeaceMakers1 extends Quest {
             public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_TOD)) {
                     _TOD.speak(p, QuestLines.peacemakers_1_tod_speech);
-                    done();
+                    done(p);
                 }
             }
 
@@ -82,7 +82,7 @@ public class PeaceMakers1 extends Quest {
             public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_ROY)) {
                     _ROY.speak(p, QuestLines.peacemakers_1_finish);
-                    done();
+                    done(p);
                 }
             }
 
@@ -94,10 +94,5 @@ public class PeaceMakers1 extends Quest {
             public void onKill(Human p, Creature creature) {
             }
         });
-    }
-
-    @Override
-    public void onQuestEnd() {
-        System.out.println("PeaceMakers1 done!");
     }
 }

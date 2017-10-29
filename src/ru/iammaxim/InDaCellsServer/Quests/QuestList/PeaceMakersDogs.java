@@ -15,8 +15,8 @@ public class PeaceMakersDogs extends Quest {
     private final NPC _JO;
     private final Creature _DOG;
 
-    public PeaceMakersDogs(World world, String title) {
-        super(title);
+    public PeaceMakersDogs(int id, World world, String title) {
+        super(id, title);
 
         _JO = new JoCaptain(world);
         _DOG = new Dog(world);
@@ -26,7 +26,7 @@ public class PeaceMakersDogs extends Quest {
             public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_JO)) {
                     _JO.speak(p, QuestLines.peacemakers_jo_dogs_intro);
-                    done();
+                    done(p);
                 }
             }
 
@@ -45,7 +45,7 @@ public class PeaceMakersDogs extends Quest {
             @Override
             public void onKill(Human p, Creature creature) {
                 if (creature.equals(_DOG)) rightNow++;
-                if (rightNow == amount) done();
+                if (rightNow == amount) done(p);
             }
 
             @Override
@@ -62,7 +62,7 @@ public class PeaceMakersDogs extends Quest {
             public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_JO)) {
                     _JO.speak(p, QuestLines.peacemakers_jo_dogs_finish);
-                    done();
+                    done(p);
                 }
             }
 
@@ -74,10 +74,5 @@ public class PeaceMakersDogs extends Quest {
             public void onKill(Human p, Creature creature) {
             }
         });
-    }
-
-    @Override
-    public void onQuestEnd() {
-        System.out.println("Ramm's quest done");
     }
 }

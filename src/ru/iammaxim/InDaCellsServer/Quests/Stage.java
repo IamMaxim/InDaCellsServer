@@ -28,9 +28,9 @@ public abstract class Stage {
 
     public abstract void onKill(Human p, Creature creature);
 
-    public void done() {
+    public void done(Human p) {
         this.state = State.FINISHED;
-        this.getAttachedQuest().reevaluate();
+        this.getAttachedQuest().reevaluate(p);
     }
 
     public String getDescription() {

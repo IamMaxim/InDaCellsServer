@@ -17,6 +17,7 @@ public class Human extends Creature {
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected HashMap<Attribute, Float> attributes = new HashMap<>();
+    private ArrayList<Integer> questsDone = new ArrayList<>();
     protected float hunger;
     protected float maxHunger;
     protected float sp;
@@ -24,6 +25,19 @@ public class Human extends Creature {
 
     public Human(World world, String name) {
         super(world, name);
+    }
+
+    public void acceptQuest(int qId) {
+        Quest q = Quest.quests.get(qId);
+        if (questsDone.contains(qId) || attachedQuests.contains(q)) return;
+        attachedQuests.add(q);
+    }
+
+    public void questDone(int qId) {
+        Quest q = Quest.quests.get(qId);
+        if (!attachedQuests.contains(q)) return;
+        attachedQuests.remove(q);
+        questsDone.add(qId);
     }
 
     @Override

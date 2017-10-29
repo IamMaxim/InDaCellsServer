@@ -15,8 +15,8 @@ public class RaidersRammsWeapon extends Quest {
     private final NPC _RAMM;
     private final ItemWeapon _RAMMS_WEAPON;
 
-    public RaidersRammsWeapon(World world, String title) {
-        super(title);
+    public RaidersRammsWeapon(int id, World world, String title) {
+        super(id, title);
 
         _RAMM = new RammCrusher(world);
         _RAMMS_WEAPON = Item.weapons.get(1);
@@ -26,7 +26,7 @@ public class RaidersRammsWeapon extends Quest {
             public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_RAMM)) {
                     _RAMM.speak(p, QuestLines.raiders_ramms_weapon_intro);
-                    done();
+                    done(p);
                 }
             }
 
@@ -42,7 +42,7 @@ public class RaidersRammsWeapon extends Quest {
             @Override
             public void onItemAdd(Human p, Item item) {
                 if (item.equals(_RAMMS_WEAPON)) {
-                    done();
+                    done(p);
                 }
             }
 
@@ -60,7 +60,7 @@ public class RaidersRammsWeapon extends Quest {
             public void onTalk(Human p, NPC npc) {
                 if (npc.equals(_RAMM)) {
                     _RAMM.speak(p, QuestLines.raiders_ramms_weapon_finish);
-                    done();
+                    done(p);
                 }
             }
 
@@ -72,10 +72,5 @@ public class RaidersRammsWeapon extends Quest {
             public void onKill(Human p, Creature creature) {
             }
         });
-    }
-
-    @Override
-    public void onQuestEnd() {
-        System.out.println("Ramm's quest done");
     }
 }

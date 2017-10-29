@@ -22,11 +22,11 @@ public class Item {
 
     public static void registerItems() {
         registerItem(new Item(0, Type.MISC, "Доска", ItemsDescription.item_plank));
-        registerItem(new Item(0, Type.MISC, "Железный прут", ItemsDescription.item_iron_rod));
-        registerItem(new Item(0, Type.MISC, "Железная пластина", ItemsDescription.item_iron_plate));
-        registerItem(new Item(0, Type.MISC, "Скотч", ItemsDescription.item_scotch_tape));
-        registerItem(new Item(0, Type.MISC, "Гвозди", ItemsDescription.item_nails));
-        registerItem(new Item(0, Type.MISC, "Верёвка", ItemsDescription.item_rope));
+        registerItem(new Item(1, Type.MISC, "Железный прут", ItemsDescription.item_iron_rod));
+        registerItem(new Item(2, Type.MISC, "Железная пластина", ItemsDescription.item_iron_plate));
+        registerItem(new Item(3, Type.MISC, "Скотч", ItemsDescription.item_scotch_tape));
+        registerItem(new Item(4, Type.MISC, "Гвозди", ItemsDescription.item_nails));
+        registerItem(new Item(5, Type.MISC, "Верёвка", ItemsDescription.item_rope));
     }
 
     public static void registerWeapon(ItemWeapon weapon) {

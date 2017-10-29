@@ -2,11 +2,11 @@ package ru.iammaxim.InDaCellsServer.World;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Mobs.*;
 import ru.iammaxim.InDaCellsServer.Creatures.NPCs.*;
+import ru.iammaxim.InDaCellsServer.Quests.Quest;
 
 public class WorldCreator {
-    public static void create(World world) {
+    public static void createMobs(World world) {
         //Town
-        world.getCell(0, 0).addCreature(new RoyFirstMarshal(world)).addCreature(new JoCaptain(world));
         world.getCell(0, 1).addCreature(new Dog(world));
         world.getCell(-1, 0).addCreature(new Hedgehog(world));
         world.getCell(-1, 1).addCreature(new Beggar(world)).addCreature(new Beggar(world));
@@ -16,10 +16,10 @@ public class WorldCreator {
         world.getCell(-2, 0).addCreature(new Trasher(world));
 
         //Tod's house
-        world.getCell(-2, -7).addCreature(new TodOldFarmer(world)).addCreature(new Raider(world)).addCreature(new Raider(world)).addCreature(new Raider(world));
+        world.getCell(-2, -7).addCreature(new Raider(world)).addCreature(new Raider(world)).addCreature(new Raider(world));
 
         //Raider's base.
-        world.getCell(-1, -5).addCreature(new GeorgRaidersLeader(world)).addCreature(new RammCrusher(world)).addCreature(new Raider(world));
+        world.getCell(-1, -5).addCreature(new Raider(world));
         world.getCell(-1,-4).addCreature(new Raider(world));
         world.getCell(0, -5).addCreature(new Raider(world)).addCreature(new Raider(world));
 
@@ -66,5 +66,20 @@ public class WorldCreator {
         world.getCell(0, 2).setDescription("Северная окраина была облюбована 3 рейдерами взимающими мзду с проходящих через их территорию, что не мешает елать им переодические набеги на центр. Лабиринты свалок и руин изученные ими как свои пять пальцев не позволяют быстро и без потерь их уничтожить.");
         world.getCell(-2, 0).setDescription("Западная окраина города не могла похвастаться особыми достопримечательностями. Разве что полубезумный мусорщик построивший свою берлогу из кусков шифера и травящий байки о старом мире в пустоту ночи. Говорят что он был нормальным, пока случайно не упал на свалочного ежа... ");
         world.getCell(0, -2).setDescription("На южной окраине устота и забршенность. Эти развалины никому не нужны.");
+    }
+
+    public static void createNPCs(World world){
+        //Town
+        world.getCell(0, 0)
+                .addCreature(new RoyFirstMarshal(world).attachQuest(Quest.quests.get(2)))
+                .addCreature(new JoCaptain(world).attachQuest(Quest.quests.get(3)));
+
+        //Tod's house
+        world.getCell(-2, -7).addCreature(new TodOldFarmer(world));
+
+        //Raider's base.
+        world.getCell(-1, -5)
+                .addCreature(new GeorgRaidersLeader(world).attachQuest(Quest.quests.get(0)))
+                .addCreature(new RammCrusher(world).attachQuest(Quest.quests.get(1)));
     }
 }
