@@ -3,6 +3,8 @@ package ru.iammaxim.InDaCellsServer.Creatures;
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.LogElement;
+import ru.iammaxim.InDaCellsServer.Packets.PacketAddToLog;
 import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
 import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
 import ru.iammaxim.InDaCellsServer.World.World;
@@ -147,6 +149,10 @@ public class Creature {
             try {
                 NetLib.send(name, new PacketCell(getCurrentCell()));
                 NetLib.send(name, new PacketUnblockInput());
+
+                if (newCell != null && newCell.getDescription()!= null && !newCell.getDescription().isEmpty()) {
+                    NetLib.send(name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, newCell.getDescription(), "World")));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

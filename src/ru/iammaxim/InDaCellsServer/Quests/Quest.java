@@ -21,7 +21,7 @@ public abstract class Quest {
     public Quest(int id, String title){
         this.id = id;
         this.title = title;
-        this.currentStage = stages.get(0);
+//        this.currentStage = stages.get(0);
     }
 
     public static void registerQuest(Quest q){
