@@ -155,16 +155,18 @@ public class Server {
         });
 
         NetBus.register(PacketSendMessage.class, (client, packet) -> {
-            PacketSendMessage message = (PacketSendMessage)packet;
+            PacketSendMessage message = (PacketSendMessage) packet;
             Player player = world.getPlayer(client.name);
 
-            for(int x = player.getX() - 1; x <= player.getX() + 1; x++){
-                for(int y = player.getY() - 1; y <= player.getY() + 1; y++){
+            for (int x = player.getX() - 1; x <= player.getX() + 1; x++) {
+                for (int y = player.getY() - 1; y <= player.getY() + 1; y++) {
                     WorldCell cell = world.getCell(x, y);
-                    if(cell != null){
+                    if (cell != null) {
                         try {
-                            NetLib.send(player.getName(), new PacketAddToLog(
-                                    new LogElement(LogElement.Type.MESSAGE, message.message, player.getName())));
+                            for (Player player1 : cell.getPlayers()) {
+                                NetLib.send(player1.getName(), new PacketAddToLog(
+                                        new LogElement(LogElement.Type.MESSAGE, message.message, player1.getName())));
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
