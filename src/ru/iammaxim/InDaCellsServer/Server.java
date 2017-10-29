@@ -117,6 +117,7 @@ public class Server {
                         NetLib.send(c.name, new PacketStartAction("Picking up...", 0.5f));
                         break;
                     case TALK:
+                        world.getPlayer(c.name).talk(((PacketDoAction) p).targetID);
                         break;
                 }
             } catch (IOException e) {
