@@ -121,7 +121,7 @@ public class NetLib {
                                     if (onPacketReceive != null)
                                         onPacketReceive.onPacketReceive(c, packet);
 
-                                    System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
+//                                    System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -152,7 +152,7 @@ public class NetLib {
                 if (baos.size() > 0)
                     c.dos.write(baos.toByteArray());
 
-                System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
+//                System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
             } catch (SocketException e) {
                 e.printStackTrace();
                 clients.remove(c.name);

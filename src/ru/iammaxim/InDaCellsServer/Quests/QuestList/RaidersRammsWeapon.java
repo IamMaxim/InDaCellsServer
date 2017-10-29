@@ -72,5 +72,7 @@ public class RaidersRammsWeapon extends Quest {
             public void onKill(Human p, Creature creature) {
             }
         });
+
+        setFirstStage();
     }
 }

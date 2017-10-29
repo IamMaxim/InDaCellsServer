@@ -91,5 +91,7 @@ public class Raiders1 extends Quest {
             public void onKill(Human p, Creature creature) {
             }
         });
+
+        setFirstStage();
     }
 }

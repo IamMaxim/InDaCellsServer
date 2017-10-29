@@ -74,5 +74,7 @@ public class PeaceMakersDogs extends Quest {
             public void onKill(Human p, Creature creature) {
             }
         });
+
+        setFirstStage();
     }
 }

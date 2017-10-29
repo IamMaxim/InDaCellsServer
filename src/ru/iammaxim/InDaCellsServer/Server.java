@@ -29,11 +29,11 @@ public class Server {
         Quest.registerQuests(world);
 
         boolean loaded = false;
-        try {
-            loaded = load("world.sav");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            loaded = load("world.sav");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         // generate starting world
         if (!loaded) {
@@ -46,15 +46,15 @@ public class Server {
                 }
             }
 
-            WorldCreator.createNPCs(world);
-            WorldCreator.createMobs(world);
-            WorldCreator.createDescriptions(world);
-
             // debug things
             world.getCell(0, 1).addActivator(new Activator(2, "Item generator"));
             world.getCell(0, 1).addActivator(new Activator(3, "Weapon generator"));
             world.getCell(0, 1).addActivator(new Activator(4, "Armor generator"));
         }
+
+        WorldCreator.createNPCs(world);
+        WorldCreator.createMobs(world);
+        WorldCreator.createDescriptions(world);
     }
 
     public void tick() {

@@ -24,6 +24,10 @@ public abstract class Quest {
 //        this.currentStage = stages.get(0);
     }
 
+    public void setFirstStage() {
+        this.currentStage = stages.get(0);
+    }
+
     public static void registerQuest(Quest q){
         quests.put(q.getId(), q);
     }

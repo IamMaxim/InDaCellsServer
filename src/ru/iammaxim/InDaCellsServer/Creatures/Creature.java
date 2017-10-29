@@ -160,7 +160,7 @@ public class Creature {
 
     public void move(int newX, int newY) {
         System.out.println("Gonna move");
-        setState(State.MOVING, 200);
+        setState(State.MOVING, 50);
         this.newX = newX;
         this.newY = newY;
     }
@@ -202,6 +202,19 @@ public class Creature {
 
     public void die() {
         isAlive = false;
+
+        getCurrentCell().removeCreature(this);
+        world.getCell(0, 0).addCreature(this);
+
+        System.out.println(name + " died.");
+
+        if (this instanceof Player) {
+            try {
+                NetLib.send(name, new PacketCell(world.getCell(0, 0)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isAlive() {

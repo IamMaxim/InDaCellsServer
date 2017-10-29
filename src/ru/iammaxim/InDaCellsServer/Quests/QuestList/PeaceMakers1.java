@@ -28,7 +28,7 @@ public class PeaceMakers1 extends Quest {
         addStage(new Stage(this, QuestLines._talk_with) {
             @Override
             public void onTalk(Human p, NPC npc) {
-                if (npc.equals(_ROY)) {
+                if (npc.getName().equals(_ROY.getName())) {
                     _ROY.speak(p, QuestLines.peacemakers_1_intro);
                     done(p);
                 }
@@ -48,7 +48,8 @@ public class PeaceMakers1 extends Quest {
 
             @Override
             public void onKill(Human p, Creature creature) {
-                if (creature.equals(_BOMJ)) rightNow++;
+                if (creature.getName().equals(_BOMJ.getName())) rightNow++;
+                System.out.println("rightNow now: " + rightNow);
                 if (rightNow == amount) done(p);
             }
 
@@ -63,7 +64,7 @@ public class PeaceMakers1 extends Quest {
         addStage(new Stage(this, QuestLines._talk_with + _TOD) {
             @Override
             public void onTalk(Human p, NPC npc) {
-                if (npc.equals(_TOD)) {
+                if (npc.getName().equals(_TOD.getName())) {
                     _TOD.speak(p, QuestLines.peacemakers_1_tod_speech);
                     done(p);
                 }
@@ -80,7 +81,7 @@ public class PeaceMakers1 extends Quest {
         addStage(new Stage(this, QuestLines._go_back + _ROY) {
             @Override
             public void onTalk(Human p, NPC npc) {
-                if (npc.equals(_ROY)) {
+                if (npc.getName().equals(_ROY.getName())) {
                     _ROY.speak(p, QuestLines.peacemakers_1_finish);
                     done(p);
                 }
@@ -94,5 +95,7 @@ public class PeaceMakers1 extends Quest {
             public void onKill(Human p, Creature creature) {
             }
         });
+
+        setFirstStage();
     }
 }

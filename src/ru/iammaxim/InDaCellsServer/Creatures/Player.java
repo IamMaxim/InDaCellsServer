@@ -23,6 +23,8 @@ public class Player extends Human {
 
     public Player(World world, String name) {
         super(world, name);
+
+        setDamage(100000);
     }
 
     @Override
@@ -33,6 +35,8 @@ public class Player extends Human {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        attachedQuests.forEach(q -> q.getCurrentStage().onItemAdd(this, item));
     }
 
     @Override
@@ -43,6 +47,14 @@ public class Player extends Human {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void doAttack() {
+        super.doAttack();
+
+        if (!getCurrentCell().getCreature(actionTargetID).isAlive())
+            attachedQuests.forEach(q -> q.getCurrentStage().onKill(this, getCurrentCell().getCreature(actionTargetID)));
     }
 
     @Override
@@ -69,9 +81,9 @@ public class Player extends Human {
     public void talk(int targetID) {
         WorldCell cell = getCurrentCell();
         NPC npc = cell.getNPC(targetID);
-        npc.speak(this, "Здравствуй, путник!");
-        npc.sendQuestsToClient(this);
-        //send packet to client
+        if (npc != null)
+            npc.speak(this, "Здравствуй, путник!");
+        attachedQuests.forEach(q -> q.getCurrentStage().onTalk(this, npc));
     }
 
     @Override

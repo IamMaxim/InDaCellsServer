@@ -8,10 +8,9 @@ import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class NPC extends Human {
-    private ArrayList<Quest> attachedQuests = new ArrayList<>();
+    private ArrayList<Quest> npcAttachedQuests = new ArrayList<>();
 
     public NPC(World world, String name) {
         super(world, name);
@@ -21,27 +20,26 @@ public class NPC extends Human {
     public void speak(Human p, String text) {
         try {
             NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, text, name)));
+            sendQuestsToClient(p);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public NPC attachQuest(Quest q){
-        this.attachedQuests.add(q);
-
+    public NPC attachQuest(Quest q) {
+        this.npcAttachedQuests.add(q);
         return this;
     }
 
     public void sendQuestsToClient(Human p) {
-        // TODO: Пакет, айдишник
-
-        if(attachedQuests.isEmpty()) return;
+        if (npcAttachedQuests.isEmpty()) return;
         try {
-            NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, "Квесты", name)));
-            for (Quest quest : attachedQuests){
+            NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, "Квесты:", name)));
+            for (Quest quest : npcAttachedQuests) {
                 NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, quest.getTitle(), name)));
-
             }
+            Quest q = npcAttachedQuests.get(0);
+            p.acceptQuest(q.id);
         } catch (IOException e) {
             e.printStackTrace();
         }
