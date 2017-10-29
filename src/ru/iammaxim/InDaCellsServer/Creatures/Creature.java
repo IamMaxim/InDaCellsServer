@@ -12,7 +12,6 @@ import ru.iammaxim.NetLib.NetLib;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 
 public class Creature {
@@ -27,6 +26,7 @@ public class Creature {
     protected float hp, maxHP;
     protected boolean isAlive;
     protected String name;
+    protected float attack;
     protected State state = State.IDLE;
     protected int actionCounter = -1;
     protected int maxActionCounter = -1;
@@ -37,6 +37,7 @@ public class Creature {
     protected Type type;
 
     public Creature() {
+        this.attack = 1;
         if (this instanceof Player)
             type = Type.PLAYER;
         else if (this instanceof NPC)
@@ -51,6 +52,8 @@ public class Creature {
         this.world = world;
         id = (int) (Math.random() * Integer.MAX_VALUE);
 //        world.getCell(x, y).addCreature(this);
+
+        world.getCell(x, y).addCreature(this);
     }
 
     public static Creature read(World world, DataInputStream dis) throws IOException {
@@ -232,6 +235,10 @@ public class Creature {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public float getAttack() {
+        return attack;
     }
 
     public WorldCell getCurrentCell() {
