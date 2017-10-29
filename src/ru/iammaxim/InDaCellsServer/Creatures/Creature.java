@@ -36,7 +36,6 @@ public class Creature {
     protected World world;
 
     protected float hp, maxHP;
-    protected float attack;
     protected boolean isAlive;
     protected String name;
     protected float damage;

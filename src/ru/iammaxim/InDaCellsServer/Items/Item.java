@@ -75,6 +75,13 @@ public class Item {
         this.id = (int) (Math.random() * Integer.MAX_VALUE);
     }
 
+    public Item(int itemID, Type type, String name) {
+        this.itemID = itemID;
+        this.type = type;
+        this.name = name;
+        this.id = (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
     public Item clone() {
         return new Item(this.itemID, this.type, this.name, this.description);
     }
@@ -113,6 +120,11 @@ public class Item {
 
     public Item setID(int id) {
         this.id = id;
+        return this;
+    }
+
+    public Item setDescription(String description) {
+        this.description = description;
         return this;
     }
 

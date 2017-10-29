@@ -52,9 +52,10 @@ public class WorldCell {
         }).start());
     }
 
-    public void addCreature(Creature creature) {
+    public WorldCell addCreature(Creature creature) {
         creatures.put(creature.getID(), creature);
         update();
+        return this;
     }
 
     public void removeCreature(Creature creature) {
