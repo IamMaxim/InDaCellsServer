@@ -3,6 +3,7 @@ package ru.iammaxim.InDaCellsServer;
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
+import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBusHandler;
 import ru.iammaxim.InDaCellsServer.Packets.*;
@@ -45,6 +46,7 @@ public class Server {
 
             world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
             world.getCell(0, 1).addActivator(new Activator(0, "Push me!").setDescription("Push me! Harder, harder!"));
+            world.getCell(0, -1).addItem(Item.weapons.get(0).clone());
         }
 
 
@@ -158,7 +160,7 @@ public class Server {
                         try {
                             for (Player player1 : cell.getPlayers()) {
                                 NetLib.send(player1.getName(), new PacketAddToLog(
-                                        new LogElement(LogElement.Type.MESSAGE, message.message, player1.getName())));
+                                        new LogElement(LogElement.Type.MESSAGE, message.message, player.getName())));
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

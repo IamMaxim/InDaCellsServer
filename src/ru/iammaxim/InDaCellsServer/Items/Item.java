@@ -65,10 +65,20 @@ public class Item {
         registerArmor(new ItemArmor(5, "Тряпочная полицейская броня", 3));
     }
 
+    public static void registerAll() {
+        registerArmors();
+        registerItems();
+        registerWeapons();
+    }
+
     public Item(int id, Type type, String name) {
         this.id = id;
         this.type = type;
         this.name = name;
+    }
+
+    public Item clone() {
+        return new Item(this.id, this.type, this.name).setDescription(this.description);
     }
 
     public void write(DataOutputStream dos) throws IOException {

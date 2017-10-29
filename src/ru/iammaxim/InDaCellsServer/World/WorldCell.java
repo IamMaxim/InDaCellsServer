@@ -94,8 +94,6 @@ public class WorldCell {
         cell.y = dis.readInt();
         cell.name = dis.readUTF();
 
-
-        // TODO: CHECK THIS!
         int creaturesCount = dis.readInt();
         for (int i = 0; i < creaturesCount; i++) {
             Creature c = Creature.read(world, dis);
@@ -164,17 +162,21 @@ public class WorldCell {
 
     public void removeItem(Item i) {
         items.remove(i.getID());
+        update();
     }
 
     public void addItem(Item i) {
         items.put(i.getID(), i);
+        update();
     }
 
     public void addActivator(Activator a) {
         activators.put(a.getID(), a);
+        update();
     }
 
     public void removeActivator(Activator a) {
         activators.remove(a.getID());
+        update();
     }
 }
