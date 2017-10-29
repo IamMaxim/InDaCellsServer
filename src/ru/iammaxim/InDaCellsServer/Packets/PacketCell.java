@@ -74,6 +74,9 @@ public class PacketCell extends Packet {
 
     @Override
     public void write(DataOutputStream dos) throws IOException {
+        dos.writeInt(x);
+        dos.writeInt(y);
+
         dos.writeInt(elements.size());
         elements.forEach(e -> {
             try {
@@ -86,6 +89,9 @@ public class PacketCell extends Packet {
 
     @Override
     public void read(DataInputStream dis) throws IOException {
+        x = dis.readInt();
+        y = dis.readInt();
+
         int count = dis.readInt();
         for (int i = 0; i < count; i++) {
             elements.add(MenuElement.read(dis));

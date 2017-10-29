@@ -97,35 +97,39 @@ public class NetLib {
         System.out.println("Starting packet receiver loop...");
         while (true) {
             synchronized (clients) {
-                for (Client c : clients.values()) {
-                    synchronized (c.lock) {
-                        try {
-                            if (c.dis.available() > 0) {
-                                int packetID = c.dis.readInt();
-                                int len = c.dis.readInt();
+                try {
+                    for (Client c : clients.values()) {
+                        synchronized (c.lock) {
+                            try {
+                                if (c.dis.available() > 0) {
+                                    int packetID = c.dis.readInt();
+                                    int len = c.dis.readInt();
 
-                                byte[] arr = new byte[len];
-                                if (len > 0) {
-                                    c.dis.readFully(arr);
+                                    byte[] arr = new byte[len];
+                                    if (len > 0) {
+                                        c.dis.readFully(arr);
+                                    }
+
+                                    Class<? extends Packet> p = packets.get(packetID);
+
+                                    if (p == null)
+                                        throw new IllegalStateException("No packet found with id " + packetID);
+
+                                    Packet packet = p.newInstance();
+                                    packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
+
+                                    if (onPacketReceive != null)
+                                        onPacketReceive.onPacketReceive(c, packet);
+
+                                    System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
                                 }
-
-                                Class<? extends Packet> p = packets.get(packetID);
-
-                                if (p == null)
-                                    throw new IllegalStateException("No packet found with id " + packetID);
-
-                                Packet packet = p.newInstance();
-                                packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
-
-                                if (onPacketReceive != null)
-                                    onPacketReceive.onPacketReceive(c, packet);
-
-                                System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 

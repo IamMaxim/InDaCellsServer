@@ -58,7 +58,7 @@ public class Item {
         registerArmor(new ItemArmor(2, "Лёгкая мусорная броня", ItemsDescription.armor_light_trash, 5));
         registerArmor(new ItemArmor(3, "Лёгкая полицейская броня", ItemsDescription.armor_light_police, 8));
         registerArmor(new ItemArmor(4, "Тряпочная мусорная броня", ItemsDescription.armor_robe_trash, 2));
-        registerArmor(new ItemArmor(5, "Тряпочная полицейская броня", ItemsDescription.armor_robe_police,3));
+        registerArmor(new ItemArmor(5, "Тряпочная полицейская броня", ItemsDescription.armor_robe_police, 3));
     }
 
     public static void registerAll() {
@@ -90,8 +90,8 @@ public class Item {
         dos.writeInt(itemID);
         dos.writeInt(type.ordinal());
         dos.writeUTF(name);
-        dos.writeInt(id);
         dos.writeUTF(description);
+        dos.writeInt(id);
     }
 
     public static Item read(DataInputStream dis) throws IOException {
