@@ -14,11 +14,14 @@ import ru.iammaxim.InDaCellsServer.World.World;
 public class Raiders1 extends Quest {
 
     private final NPC _GEORG;
-    private final NPC _TIM = new TimTrasher();
+    private final NPC _TIM;
 
     public Raiders1(World world, String title) {
         super(title);
+
         _GEORG = new GeorgRaidersLeader(world);
+        _TIM = new TimTrasher(world);
+
         addStage(new Stage(this, QuestLines._talk_with + _GEORG.getName()) {
             @Override
             public void onTalk(Human p, NPC npc) {
