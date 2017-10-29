@@ -9,6 +9,7 @@ import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.NetLib.Client;
 import ru.iammaxim.NetLib.NetLib;
+import ru.iammaxim.NetLib.Packet;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -95,6 +96,25 @@ public class Server {
                 case DOWN:
                     player.move(player.getX(), player.getY() - 1);
                     break;
+            }
+        });
+
+        NetBus.register(PacketSendMessage.class, (client, packet) -> {
+            PacketSendMessage message = (PacketSendMessage)packet;
+            Player player = world.getPlayer(client.name);
+
+            for(int x = player.getX() - 1; x <= player.getX() + 1; x++){
+                for(int y = player.getY() - 1; y <= player.getY() + 1; y++){
+                    WorldCell cell = world.getCell(x, y);
+                    if(cell != null){
+                        try {
+                            NetLib.send(player.getName(), new PacketAddToLog(
+                                    new LogElement(LogElement.Type.MESSAGE, message.message, player.getName())));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         });
     }
