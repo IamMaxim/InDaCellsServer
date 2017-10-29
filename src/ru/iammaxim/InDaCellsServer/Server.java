@@ -1,5 +1,6 @@
 package ru.iammaxim.InDaCellsServer;
 
+import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
@@ -23,6 +24,7 @@ public class Server {
 
     public Server() {
         world = new World("World");
+        initHandlers();
 
         boolean loaded = false;
         try {
@@ -42,8 +44,36 @@ public class Server {
                 }
 
             world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
+            world.getCell(0, 1).addActivator(new Activator("Push me!") {
+                @Override
+                public void activate(Creature c) {
+                    super.activate(c);
+
+                    c.damage(5);
+                }
+            }.setDescription("Push me! Harder, harder!"));
         }
 
+
+    }
+
+    public void tick() {
+//        System.out.println("Tick()");
+
+        ArrayList<Creature> creatures = new ArrayList<>();
+        synchronized (world.getCells()) {
+            for (Integer integer1 : world.getCells().keySet()) {
+                HashMap<Integer, WorldCell> row = world.getCells().get(integer1);
+                for (Integer integer : row.keySet()) {
+                    WorldCell cell = row.get(integer);
+                    creatures.addAll(cell.getCreatures());
+                }
+            }
+        }
+        creatures.forEach(Creature::tick);
+    }
+
+    private void initHandlers() {
         NetLib.setOnClientConnect(c -> {
             Player p = world.getPlayers().get(c.name);
             // player is connecting first time
@@ -74,9 +104,34 @@ public class Server {
 
         NetLib.setOnPacketReceive(NetBus::handle);
 
-        NetBus.register(PacketDoAction.class, (c, p) -> {
+        NetBus.register(PacketDoAction.class, (Client c, Packet p) -> {
             PacketDoAction packet = (PacketDoAction) p;
             System.out.println("Gonna do action " + packet.type + " on " + packet.targetID);
+
+            try {
+                switch (((PacketDoAction) p).type) {
+                    case ATTACK:
+                        world.getPlayer(c.name).attack(((PacketDoAction) p).targetID);
+                        NetLib.send(c.name, new PacketStartAction("Attacking...", 1));
+                        break;
+                    case DEFEND:
+                        world.getPlayer(c.name).defend();
+                        NetLib.send(c.name, new PacketStartAction("Defending...", 2));
+                        break;
+                    case ACTIVATE:
+                        world.getPlayer(c.name).activate(((PacketDoAction) p).targetID);
+                        NetLib.send(c.name, new PacketStartAction("Activating...", 1));
+                        break;
+                    case PICKUP_ITEM:
+                        world.getPlayer(c.name).pickup(((PacketDoAction) p).targetID);
+                        NetLib.send(c.name, new PacketStartAction("Picking up...", 0.5f));
+                        break;
+                    case TALK:
+                        break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
         NetBus.register(PacketMove.class, (c, packet) -> {
@@ -117,22 +172,6 @@ public class Server {
                 }
             }
         });
-    }
-
-    public void tick() {
-//        System.out.println("Tick()");
-
-        ArrayList<Creature> creatures = new ArrayList<>();
-        synchronized (world.getCells()) {
-            for (Integer integer1 : world.getCells().keySet()) {
-                HashMap<Integer, WorldCell> row = world.getCells().get(integer1);
-                for (Integer integer : row.keySet()) {
-                    WorldCell cell = row.get(integer);
-                    creatures.addAll(cell.getCreatures());
-                }
-            }
-        }
-        creatures.forEach(Creature::tick);
     }
 
     public void run() {

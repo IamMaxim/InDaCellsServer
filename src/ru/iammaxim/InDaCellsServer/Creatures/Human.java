@@ -4,8 +4,11 @@ import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.World.World;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Human extends Creature {
     protected HashMap<Item.Type, Item> equippedItems = new HashMap<>();
@@ -39,6 +42,16 @@ public class Human extends Creature {
 
     public ArrayList<Item> getInventory() {
         return inventory;
+    }
+
+    @Override
+    public void write(DataOutputStream dos) throws IOException {
+        super.write(dos);
+
+        dos.writeFloat(hunger);
+        dos.writeFloat(maxHunger);
+        dos.writeFloat(sp);
+        dos.writeFloat(maxSP);
     }
 
     public float getSP() {
@@ -80,5 +93,10 @@ public class Human extends Creature {
 
     public float getMaxSP() {
         return maxSP;
+    }
+
+    public void pickup(int targetID) {
+        setState(State.PICKING_UP, 50);
+        actionTargetID = targetID;
     }
 }

@@ -114,6 +114,10 @@ public class WorldCell {
             cell.items.put(item.getID(), item);
         }
 
+        cell.getPlayers().forEach(p -> {
+            world.addPlayer(p.getName(), p);
+        });
+
         return cell;
     }
 
@@ -156,5 +160,21 @@ public class WorldCell {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public void removeItem(Item i) {
+        items.remove(i.getID());
+    }
+
+    public void addItem(Item i) {
+        items.put(i.getID(), i);
+    }
+
+    public void addActivator(Activator a) {
+        activators.put(a.getID(), a);
+    }
+
+    public void removeActivator(Activator a) {
+        activators.remove(a.getID());
     }
 }

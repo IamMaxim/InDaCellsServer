@@ -13,7 +13,7 @@ import java.net.SocketException;
 
 public class Player extends Human {
     protected int statsUpdateTimer = 0;
-    protected int spTimer = 0;
+//    protected int spTimer = 0;
 
 
     public Player(World world, String name) {
@@ -45,11 +45,11 @@ public class Player extends Human {
     public void tick() {
         super.tick();
 
-        spTimer++;
+/*        spTimer++;
         if (spTimer == 1000) {
             spTimer = 0;
             sp = 0;
-        }
+        }*/
 
         statsUpdateTimer++;
         if (statsUpdateTimer == 50) {
