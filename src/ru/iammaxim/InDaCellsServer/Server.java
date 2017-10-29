@@ -1,5 +1,6 @@
 package ru.iammaxim.InDaCellsServer;
 
+import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
@@ -44,6 +45,11 @@ public class Server {
 
             WorldCreator.create(world);
             WorldCreator.createDescriptions(world);
+
+            // debug things
+            world.getCell(0, 1).addActivator(new Activator(2, "Item generator"));
+            world.getCell(0, 1).addActivator(new Activator(3, "Weapon generator"));
+            world.getCell(0, 1).addActivator(new Activator(4, "Armor generator"));
         }
     }
 

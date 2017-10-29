@@ -11,19 +11,19 @@ public class Scripts {
                 };
             case 1: // 0, -1 Spawn item
                 return h -> {
-                    if (h == null)
-                        System.out.println("Human is null");
-                    if (h.getWorld() == null)
-                        System.out.println("World is null");
-                    if (h.getWorld().getCell(0, -1) == null)
-                        System.out.println("Cell is null");
-                    if (Item.weapons == null)
-                        System.out.println("Weapons is null");
-                    if (Item.weapons.get(0) == null)
-                        System.out.println("Item is null");
-                    if (Item.weapons.get(0).clone() == null)
-                        System.out.println("Item clone is null");
                     h.getWorld().getCell(0, -1).addItem(Item.weapons.get(0).clone());
+                };
+            case 2:
+                return h -> {
+                    h.getWorld().getCell(0, 1).addItem(Item.items.get((int) (Math.random() * (Item.items.size() - 1))).clone());
+                };
+            case 3:
+                return h -> {
+                    h.getWorld().getCell(0, 1).addItem(Item.weapons.get((int) (Math.random() * (Item.weapons.size() - 1))).clone());
+                };
+            case 4:
+                return h -> {
+                    h.getWorld().getCell(0, 1).addItem(Item.armors.get((int) (Math.random() * (Item.armors.size() - 1))).clone());
                 };
         }
 

@@ -26,12 +26,11 @@ public class NPC extends Human {
 
 
     public void sendQuests(Human p) {
-        if(attachedQuests.isEmpty()) return;
+        if (attachedQuests.isEmpty()) return;
         try {
             NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, "Квесты", name)));
-            for (Quest quest : attachedQuests){
+            for (Quest quest : attachedQuests) {
                 NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, quest.getTitle(), name)));
-
             }
         } catch (IOException e) {
             e.printStackTrace();
