@@ -109,6 +109,7 @@ public class WorldCell {
         int itemsCount = dis.readInt();
         for (int i = 0; i < itemsCount; i++) {
             Item item = Item.read(dis);
+            System.out.println("Putting item with ID: " + item.getID());
             cell.items.put(item.getID(), item);
         }
 
@@ -166,6 +167,7 @@ public class WorldCell {
     }
 
     public void addItem(Item i) {
+        System.out.println("Adding item with id " + i.getID());
         items.put(i.getID(), i);
         update();
     }

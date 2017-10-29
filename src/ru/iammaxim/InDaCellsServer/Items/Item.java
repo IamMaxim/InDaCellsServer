@@ -10,10 +10,11 @@ public class Item {
     public static HashMap<Integer, ItemWeapon> weapons = new HashMap<>();
     public static HashMap<Integer, ItemArmor> armors = new HashMap<>();
 
-    public final int id;
+    public final int itemID;
     public final String name;
     public final Type type;
     private String description = "";
+    public int id;
 
     public Item setDescription(String s) {
         this.description = s;
@@ -21,7 +22,7 @@ public class Item {
     }
 
     public static void registerItem(Item item) {
-        items.put(item.id, item);
+        items.put(item.itemID, item);
     }
 
     public static void registerItems() {
@@ -34,7 +35,7 @@ public class Item {
     }
 
     public static void registerWeapon(ItemWeapon weapon) {
-        weapons.put(weapon.id, weapon);
+        weapons.put(weapon.itemID, weapon);
     }
 
     public static void registerWeapons() {
@@ -53,7 +54,7 @@ public class Item {
     }
 
     public static void registerArmor(ItemArmor armor) {
-        armors.put(armor.id, armor);
+        armors.put(armor.itemID, armor);
     }
 
     public static void registerArmors() {
@@ -71,20 +72,22 @@ public class Item {
         registerWeapons();
     }
 
-    public Item(int id, Type type, String name) {
-        this.id = id;
+    public Item(int itemID, Type type, String name) {
+        this.itemID = itemID;
         this.type = type;
         this.name = name;
+        this.id = (int) (Math.random() * Integer.MAX_VALUE);
     }
 
     public Item clone() {
-        return new Item(this.id, this.type, this.name).setDescription(this.description);
+        return new Item(this.itemID, this.type, this.name).setDescription(this.description);
     }
 
     public void write(DataOutputStream dos) throws IOException {
-        dos.writeInt(id);
-        dos.writeUTF(name);
+        dos.writeInt(itemID);
         dos.writeInt(type.ordinal());
+        dos.writeUTF(name);
+        dos.writeInt(id);
     }
 
     public static Item read(DataInputStream dis) throws IOException {
@@ -93,6 +96,7 @@ public class Item {
                 Type.values()[dis.readInt()],
                 dis.readUTF()
         );
+        item.id = dis.readInt();
 
         return item;
     }
@@ -107,6 +111,11 @@ public class Item {
 
     public String getDescription() {
         return description;
+    }
+
+    public Item setID(int id) {
+        this.id = id;
+        return this;
     }
 
     public enum Type {

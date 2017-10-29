@@ -46,7 +46,7 @@ public class Server {
 
             world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
             world.getCell(0, 1).addActivator(new Activator(0, "Push me!").setDescription("Push me! Harder, harder!"));
-            world.getCell(0, -1).addItem(Item.weapons.get(0).clone());
+            world.getCell(0, -1).addActivator(new Activator(1, "Spawn an item").setDescription("Push me and you'll se a very beautiful thing it front of ya"));
         }
 
 
