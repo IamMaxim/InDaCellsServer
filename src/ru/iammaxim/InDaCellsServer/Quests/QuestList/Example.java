@@ -1,15 +1,14 @@
 package ru.iammaxim.InDaCellsServer.Quests.QuestList;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
-import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.Creatures.Mobs.Hedgehog;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.NPCs.TimTrasher;
 import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.Quests.*;
 
-public class FirstQuest extends Quest{
-    public FirstQuest(int id, String title) {
+public class Example extends Quest{
+    public Example(int id, String title) {
         super(title);
         this.addStage(new Stage(this, "Тестовый убивающий квест") {
             private int needed = 10;

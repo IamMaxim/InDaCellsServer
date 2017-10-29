@@ -6,4 +6,8 @@ public class NPC extends Human {
     public NPC(World world, String name) {
         super(world, name);
     }
+
+    public void speak(String text){
+        System.out.println(name + ": " + text);
+    }
 }
