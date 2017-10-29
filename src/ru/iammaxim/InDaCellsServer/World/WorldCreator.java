@@ -6,7 +6,7 @@ import ru.iammaxim.InDaCellsServer.Creatures.NPCs.*;
 public class WorldCreator {
     public static void create(World world) {
         //Town
-        world.getCell(0, 0).addCreature(new RoyFirstMarshal(world)).addCreature(new JoCaptain());
+        world.getCell(0, 0).addCreature(new RoyFirstMarshal(world)).addCreature(new JoCaptain(world));
         world.getCell(0, 1).addCreature(new Dog(world));
         world.getCell(-1, 0).addCreature(new Hedgehog(world));
         world.getCell(-1, 1).addCreature(new Beggar(world)).addCreature(new Beggar(world));
