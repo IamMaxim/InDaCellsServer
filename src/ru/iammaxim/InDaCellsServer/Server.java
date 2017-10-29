@@ -1,15 +1,12 @@
 package ru.iammaxim.InDaCellsServer;
 
-import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
-import ru.iammaxim.InDaCellsServer.Creatures.Mobs.*;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
-import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
-import ru.iammaxim.InDaCellsServer.NetBus.NetBusHandler;
 import ru.iammaxim.InDaCellsServer.Packets.*;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
+import ru.iammaxim.InDaCellsServer.World.WorldCreator;
 import ru.iammaxim.NetLib.Client;
 import ru.iammaxim.NetLib.NetLib;
 import ru.iammaxim.NetLib.Packet;
@@ -17,7 +14,6 @@ import ru.iammaxim.NetLib.Packet;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class Server {
     public World world;
@@ -39,24 +35,15 @@ public class Server {
         if (!loaded) {
             System.out.println("No save found. Generating new world");
 
-            for (int x = -10; x <= 10; x++)
-                for (int y = -10; y <= 10; y++) {
+            for (int x = -20; x <= 20; x++) {
+                for (int y = -20; y <= 20; y++) {
                     WorldCell cell = new WorldCell();
                     world.addCell(x, y, cell);
                 }
+            }
 
-            world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
-            world.getCell(0, 1).addActivator(new Activator(0, "Push me!").setDescription("Push me! Harder, harder!"));
-            world.getCell(0, -1).addActivator(new Activator(1, "Spawn an item").setDescription("Push me and you'll se a very beautiful thing it front of ya"));
-
-            world.getCell(-1, -1).addCreature(new Beggar(world));
-            world.getCell(-1, -1).addCreature(new Dog(world));
-            world.getCell(-1, -1).addCreature(new Fox(world));
-            world.getCell(-1, -1).addCreature(new Hedgehog(world));
-            world.getCell(-1, -1).addCreature(new Trasher(world));
+            WorldCreator.create(world);
         }
-
-
     }
 
     public void tick() {

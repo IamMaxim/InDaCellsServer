@@ -34,6 +34,7 @@ public class Creature {
 
     protected int x = 0, y = 0;
     protected World world;
+
     protected float hp, maxHP;
     protected boolean isAlive;
     protected String name;
@@ -101,6 +102,24 @@ public class Creature {
             for (int i = 0; i < invSize; i++) {
                 ((Human) creature).inventory.add(Item.read(dis));
             }
+        }
+
+        return creature;
+    }
+
+    public static Creature read(DataInputStream dis) throws IOException {
+        Creature creature = new Creature();
+        creature.name = dis.readUTF();
+        creature.x = dis.readInt();
+        creature.y = dis.readInt();
+        creature.hp = dis.readFloat();
+        creature.maxHP = dis.readFloat();
+
+        if (creature instanceof Human) {
+            ((Human) creature).hunger = dis.readFloat();
+            ((Human) creature).maxHunger = dis.readFloat();
+            ((Human) creature).sp = dis.readFloat();
+            ((Human) creature).maxSP = dis.readFloat();
         }
 
         return creature;
