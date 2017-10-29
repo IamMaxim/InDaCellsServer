@@ -15,6 +15,17 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class Creature {
+    public Creature(World world, String name, int hp, int damage) {
+        this(world, name);
+        setMaxHP(hp);
+        maxHP();
+        setDamage(damage);
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
     public enum Type {
         CREATURE,
         NPC,
@@ -28,7 +39,7 @@ public class Creature {
     protected float attack;
     protected boolean isAlive;
     protected String name;
-    protected float attack;
+    protected float damage;
     protected State state = State.IDLE;
     protected int actionCounter = -1;
     protected int maxActionCounter = -1;
@@ -39,7 +50,7 @@ public class Creature {
     protected Type type;
 
     public Creature() {
-        this.attack = 1;
+        this.damage = 1;
         if (this instanceof Player)
             type = Type.PLAYER;
         else if (this instanceof NPC)
@@ -54,8 +65,6 @@ public class Creature {
         this.world = world;
         id = (int) (Math.random() * Integer.MAX_VALUE);
 //        world.getCell(x, y).addCreature(this);
-
-        world.getCell(x, y).addCreature(this);
     }
 
     public static Creature read(World world, DataInputStream dis) throws IOException {
@@ -257,8 +266,8 @@ public class Creature {
         }
     }
 
-    public float getAttack() {
-        return attack;
+    public float getDamage() {
+        return damage;
     }
 
     public WorldCell getCurrentCell() {
@@ -310,7 +319,7 @@ public class Creature {
             return;
 
         // TODO: change to real value
-        victim.damage(1, additionalInt);
+        victim.damage(getDamage(), additionalInt);
 
         try {
             NetLib.send(name, new PacketUnblockInput());

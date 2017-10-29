@@ -2,6 +2,7 @@ package ru.iammaxim.InDaCellsServer;
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
+import ru.iammaxim.InDaCellsServer.Creatures.Mobs.*;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
@@ -47,6 +48,12 @@ public class Server {
             world.getCell(0, 0).addCreature(new Creature(world, "A very dangerous one"));
             world.getCell(0, 1).addActivator(new Activator(0, "Push me!").setDescription("Push me! Harder, harder!"));
             world.getCell(0, -1).addActivator(new Activator(1, "Spawn an item").setDescription("Push me and you'll se a very beautiful thing it front of ya"));
+
+            world.getCell(-1, -1).addCreature(new Beggar(world));
+            world.getCell(-1, -1).addCreature(new Dog(world));
+            world.getCell(-1, -1).addCreature(new Fox(world));
+            world.getCell(-1, -1).addCreature(new Hedgehog(world));
+            world.getCell(-1, -1).addCreature(new Trasher(world));
         }
 
 

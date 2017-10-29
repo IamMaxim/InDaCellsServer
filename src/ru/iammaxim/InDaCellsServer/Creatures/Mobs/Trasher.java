@@ -4,7 +4,7 @@ import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.World.World;
 
 public class Trasher extends Creature {
-    public Trasher(){
-        super(new World("World"), "Мусорщик", 10, 4);
+    public Trasher(World world) {
+        super(world, "Мусорщик", 10, 4);
     }
 }
