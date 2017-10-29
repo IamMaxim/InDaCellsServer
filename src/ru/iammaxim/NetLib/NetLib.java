@@ -96,37 +96,33 @@ public class NetLib {
         while (true) {
             synchronized (clients) {
                 for (Client c : clients.values()) {
-                    try {
-                        if (c.dis.available() > 0) {
-                            int packetID = c.dis.readInt();
-                            int len = c.dis.readInt();
+                    synchronized (c.lock) {
+                        try {
+                            if (c.dis.available() > 0) {
+                                int packetID = c.dis.readInt();
+                                int len = c.dis.readInt();
 
-                            System.out.println(packetID);
-                            System.out.println(len);
+                                byte[] arr = new byte[len];
+                                if (len > 0) {
+                                    c.dis.readFully(arr);
+                                }
 
-                            byte[] arr = new byte[len];
-                            if (len > 0) {
-                                c.dis.readFully(arr);
+                                Class<? extends Packet> p = packets.get(packetID);
+
+                                if (p == null)
+                                    throw new IllegalStateException("No packet found with id " + packetID);
+
+                                Packet packet = p.newInstance();
+                                packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
+
+                                if (onPacketReceive != null)
+                                    onPacketReceive.onPacketReceive(c, packet);
+
+                                System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
                             }
-
-
-                            System.out.println(Arrays.toString(arr));
-
-                            Class<? extends Packet> p = packets.get(packetID);
-
-                            if (p == null)
-                                throw new IllegalStateException("No packet found with id " + packetID);
-
-                            Packet packet = p.newInstance();
-                            packet.read(new DataInputStream(new ByteArrayInputStream(arr)));
-
-                            if (onPacketReceive != null)
-                                onPacketReceive.onPacketReceive(c, packet);
-
-                            System.out.println("Packet " + packet.getClass().getSimpleName() + " read from " + (c.name != null ? c.name : "Unknown name"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -140,20 +136,21 @@ public class NetLib {
     }
 
     private static void send(Client c, Packet packet) throws IOException {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            packet.write(new DataOutputStream(baos));
-            int packetID = packetIds.get(packet.getClass());
-            c.dos.writeInt(packetID);
-            c.dos.writeInt(baos.size());
-            if (baos.size() > 0)
-                c.dos.write(baos.toByteArray(), 0, baos.size());
+        synchronized (c.lock) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                packet.write(new DataOutputStream(baos));
+                int packetID = packetIds.get(packet.getClass());
+                c.dos.writeInt(packetID);
+                c.dos.writeInt(baos.size());
+                if (baos.size() > 0)
+                    c.dos.write(baos.toByteArray());
 
-            System.out.println("Packet " + packet.getClass().getSimpleName() + " (" + packetID + " " + baos.size() + ") written to " + (c.name != null ? c.name : "unknown client"));
-            System.out.println(Arrays.toString(baos.toByteArray()));
-        } catch (SocketException e) {
-            e.printStackTrace();
-            clients.remove(c.name);
+                System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
+            } catch (SocketException e) {
+                e.printStackTrace();
+                clients.remove(c.name);
+            }
         }
     }
 
