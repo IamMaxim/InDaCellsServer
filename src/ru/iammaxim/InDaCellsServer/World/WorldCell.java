@@ -19,6 +19,7 @@ import java.util.HashMap;
 public class WorldCell {
     private int x, y;
     private String name = "Unnamed cell";
+    private String description = "";
     private HashMap<Integer, Creature> creatures = new HashMap();
     private HashMap<Integer, Activator> activators = new HashMap();
     private HashMap<Integer, Item> items = new HashMap();
@@ -161,6 +162,14 @@ public class WorldCell {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void removeItem(Item i) {
