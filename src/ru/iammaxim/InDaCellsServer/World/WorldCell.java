@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class WorldCell {
     private int x, y;
-    private String name = "Unnamed cell";
+    private String name = "Wastelands";
     private String description = "";
     private HashMap<Integer, Creature> creatures = new HashMap();
     private HashMap<Integer, Activator> activators = new HashMap();
@@ -55,12 +55,14 @@ public class WorldCell {
     }
 
     public WorldCell addCreature(Creature creature) {
+        System.out.println("[" + x + ", " + y + "] Adding creature " + creature.getName());
         creatures.put(creature.getID(), creature);
         update();
         return this;
     }
 
     public void removeCreature(Creature creature) {
+        System.out.println("[" + x + ", " + y + "] Removing " + creature.getName());
         creatures.remove(creature.getID());
         update();
     }
@@ -197,5 +199,9 @@ public class WorldCell {
 
     public NPC getNPC(int targetID) {
         return (NPC) creatures.get(targetID);
+    }
+
+    public String getName() {
+        return name;
     }
 }

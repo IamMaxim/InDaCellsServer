@@ -22,7 +22,7 @@ public class NetLib {
         packets.put(id, packet);
         packetIds.put(packet, id);
 
-        System.out.println("Registered packet " + packet.getName() + " with id " + id);
+//        System.out.println("Registered packet " + packet.getName() + " with id " + id);
     }
 
     public static void registerAll() {
@@ -154,7 +154,8 @@ public class NetLib {
 
 //                System.out.println("Packet " + packet.getClass().getSimpleName() + " written to " + (c.name != null ? c.name : "unknown client"));
             } catch (SocketException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+                System.out.println("Client \"" + c.name + "\" disconnected.");
                 clients.remove(c.name);
             }
         }

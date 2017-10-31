@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class PacketCell extends Packet {
     //    public WorldCell cell;
     public int x, y;
+    public String name;
     public ArrayList<MenuElement> elements = new ArrayList<>();
 
 
@@ -27,6 +28,7 @@ public class PacketCell extends Packet {
     public PacketCell(WorldCell cell) {
         this.x = cell.getX();
         this.y = cell.getY();
+        this.name = cell.getName();
 
         elements.add(new MenuElement(MenuElement.Type.HEADER, "Игроки", 0));
 
@@ -76,6 +78,7 @@ public class PacketCell extends Packet {
     public void write(DataOutputStream dos) throws IOException {
         dos.writeInt(x);
         dos.writeInt(y);
+        dos.writeUTF(name);
 
         dos.writeInt(elements.size());
         elements.forEach(e -> {
@@ -91,6 +94,7 @@ public class PacketCell extends Packet {
     public void read(DataInputStream dis) throws IOException {
         x = dis.readInt();
         y = dis.readInt();
+        name = dis.readUTF();
 
         int count = dis.readInt();
         for (int i = 0; i < count; i++) {

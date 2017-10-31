@@ -18,7 +18,7 @@ public abstract class Quest {
     public final ArrayList<Stage> stages = new ArrayList<>();
     protected Stage currentStage;
 
-    public Quest(int id, String title){
+    public Quest(int id, String title) {
         this.id = id;
         this.title = title;
 //        this.currentStage = stages.get(0);
@@ -28,11 +28,11 @@ public abstract class Quest {
         this.currentStage = stages.get(0);
     }
 
-    public static void registerQuest(Quest q){
+    public static void registerQuest(Quest q) {
         quests.put(q.getId(), q);
     }
 
-    public static void registerQuests(World world){
+    public static void registerQuests(World world) {
         registerQuest(new Raiders1(0, world, "Квест Рейдеров"));
         registerQuest(new RaidersRammsWeapon(1, world, "Дубина Рамма"));
 
@@ -40,28 +40,28 @@ public abstract class Quest {
         registerQuest(new PeaceMakersDogs(3, world, "Защитник"));
     }
 
-    public void onQuestEnd(Human p){
+    public void onQuestEnd(Human p) {
         p.questDone(this.id);
     }
 
-    public void addStage(Stage stage){
+    public void addStage(Stage stage) {
         stages.add(stage);
     }
 
-    public void reevaluate(Human p){
+    public void reevaluate(Human p) {
         boolean inProgressOrClosed = false;
-        for(int i = 0; i < stages.size(); i++) {
+        for (int i = 0; i < stages.size(); i++) {
             if (stages.get(i).getState() == Stage.State.FINISHED
                     && stages.get(i + 1) != null
                     && stages.get(i + 1).getState() != Stage.State.IN_PROGRESS) {
                 stages.get(i + 1).setState(Stage.State.IN_PROGRESS);
             }
-            if(stages.get(i).getState() == Stage.State.CLOSED
-                    || stages.get(i).getState() == Stage.State.IN_PROGRESS){
+            if (stages.get(i).getState() == Stage.State.CLOSED
+                    || stages.get(i).getState() == Stage.State.IN_PROGRESS) {
                 inProgressOrClosed = true;
             }
         }
-        if( ! inProgressOrClosed)
+        if (!inProgressOrClosed)
             this.onQuestEnd(p);
     }
 
@@ -73,7 +73,7 @@ public abstract class Quest {
         return title;
     }
 
-    public Stage getCurrentStage(){
+    public Stage getCurrentStage() {
         return currentStage;
     }
 }

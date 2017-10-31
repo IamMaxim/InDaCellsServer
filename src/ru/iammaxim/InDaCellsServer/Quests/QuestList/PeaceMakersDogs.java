@@ -24,7 +24,7 @@ public class PeaceMakersDogs extends Quest {
         addStage(new Stage(this, QuestLines._talk_with + _JO.getName()) {
             @Override
             public void onTalk(Human p, NPC npc) {
-                if (npc.equals(_JO)) {
+                if (npc.getName().equals(_JO.getName())) {
                     _JO.speak(p, QuestLines.peacemakers_jo_dogs_intro);
                     done(p);
                 }
@@ -44,7 +44,8 @@ public class PeaceMakersDogs extends Quest {
 
             @Override
             public void onKill(Human p, Creature creature) {
-                if (creature.equals(_DOG)) rightNow++;
+                if (creature.getName().equals(_DOG.getName())) rightNow++;
+                System.out.println("RightNow now: " + rightNow);
                 if (rightNow == amount) done(p);
             }
 
@@ -60,7 +61,7 @@ public class PeaceMakersDogs extends Quest {
         addStage(new Stage(this, QuestLines._go_back + _JO.getName()) {
             @Override
             public void onTalk(Human p, NPC npc) {
-                if (npc.equals(_JO)) {
+                if (npc.getName().equals(_JO.getName())) {
                     _JO.speak(p, QuestLines.peacemakers_jo_dogs_finish);
                     done(p);
                 }

@@ -2,29 +2,18 @@ package ru.iammaxim.InDaCellsServer.Creatures;
 
 
 import ru.iammaxim.InDaCellsServer.Items.Item;
-import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
-import ru.iammaxim.InDaCellsServer.Packets.PacketInventoryChange;
-import ru.iammaxim.InDaCellsServer.Packets.PacketStartAction;
-import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
-import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
-import ru.iammaxim.InDaCellsServer.Quests.Quest;
+import ru.iammaxim.InDaCellsServer.Packets.*;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.NetLib.NetLib;
 
 import java.io.IOException;
-import java.net.SocketException;
-import java.util.ArrayList;
 
 public class Player extends Human {
     protected int statsUpdateTimer = 0;
-//    protected int spTimer = 0;
-
 
     public Player(World world, String name) {
         super(world, name);
-
-        setDamage(100000);
     }
 
     @Override
@@ -53,7 +42,7 @@ public class Player extends Human {
     protected void doAttack() {
         super.doAttack();
 
-        if (!getCurrentCell().getCreature(actionTargetID).isAlive())
+        if (getCurrentCell().getCreature(actionTargetID) != null && !getCurrentCell().getCreature(actionTargetID).isAlive())
             attachedQuests.forEach(q -> q.getCurrentStage().onKill(this, getCurrentCell().getCreature(actionTargetID)));
     }
 
@@ -71,7 +60,6 @@ public class Player extends Human {
     protected void doMove() {
         super.doMove();
         try {
-            NetLib.send(name, new PacketCell(getCurrentCell()));
             NetLib.send(name, new PacketUnblockInput());
         } catch (IOException e) {
             e.printStackTrace();
@@ -89,12 +77,6 @@ public class Player extends Human {
     @Override
     public void tick() {
         super.tick();
-
-/*        spTimer++;
-        if (spTimer == 1000) {
-            spTimer = 0;
-            sp = 0;
-        }*/
 
         statsUpdateTimer++;
         if (statsUpdateTimer == 50) {

@@ -5,7 +5,7 @@ import ru.iammaxim.InDaCellsServer.Items.Item;
 public class Scripts {
     public static OnActivate getActivatorScript(int id) {
         switch (id) {
-            case 0: // 0,0 Push me
+            case 0: // 0, 0 Push me
                 return h -> {
                     h.damage(5, 0);
                 };

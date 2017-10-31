@@ -31,6 +31,7 @@ public abstract class Stage {
     public void done(Human p) {
         this.state = State.FINISHED;
         this.getAttachedQuest().reevaluate(p);
+        System.out.println("Reevaluating");
     }
 
     public String getDescription() {

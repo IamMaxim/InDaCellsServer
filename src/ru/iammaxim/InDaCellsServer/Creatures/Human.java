@@ -49,6 +49,9 @@ public class Human extends Creature {
 
         sp += 0.01;
         sp = Math.min(sp, maxSP);
+
+        hunger -= 0.0001;
+        hunger = Math.max(hunger, 0);
     }
 
     public HashMap<Item.Type, Integer> getEquippedItems() {

@@ -9,6 +9,7 @@ public class NetBus {
     public static HashMap<Class<? extends Packet>, NetBusHandler> handlers = new HashMap<>();
 
     public static void register(Class<? extends Packet> clazz, NetBusHandler handler) {
+//        System.out.println("Registering handler for " + clazz.getSimpleName());
         handlers.put(clazz, handler);
     }
 

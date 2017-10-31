@@ -17,26 +17,8 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class Creature {
-    public Creature(World world, String name, int hp, int damage) {
-        this(world, name);
-        setMaxHP(hp);
-        maxHP();
-        setDamage(damage);
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public enum Type {
-        CREATURE,
-        NPC,
-        PLAYER
-    }
-
     protected int x = 0, y = 0;
     protected World world;
-
     protected float hp, maxHP;
     protected boolean isAlive;
     protected String name;
@@ -46,9 +28,16 @@ public class Creature {
     protected int maxActionCounter = -1;
     protected int newX, newY;
     protected int actionTargetID = -1;
-    protected int additionalInt = -1;
+    protected int attackMode = -1;
     protected int id;
     protected Type type;
+
+    public Creature(World world, String name, int hp, int damage) {
+        this(world, name);
+        setMaxHP(hp);
+        maxHP();
+        setDamage(damage);
+    }
 
     public Creature() {
         this.damage = 1;
@@ -147,10 +136,9 @@ public class Creature {
 
         if (this instanceof Player)
             try {
-                NetLib.send(name, new PacketCell(getCurrentCell()));
                 NetLib.send(name, new PacketUnblockInput());
 
-                if (newCell != null && newCell.getDescription()!= null && !newCell.getDescription().isEmpty()) {
+                if (newCell != null && newCell.getDescription() != null && !newCell.getDescription().isEmpty()) {
                     NetLib.send(name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, newCell.getDescription(), "World")));
                 }
             } catch (IOException e) {
@@ -203,10 +191,23 @@ public class Creature {
     public void die() {
         isAlive = false;
 
+        System.out.println(name + " died.");
+
+        System.out.println("Players this cell: " + getCurrentCell().getPlayers());
+
+        System.out.println("Creatures this cell:");
+        getCurrentCell().getCreatures().forEach(c -> System.out.println(c.type + " " + c.getName()));
+
+        getCurrentCell().getPlayers().forEach(p -> {
+            try {
+                NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, getName() + " died.", "")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         getCurrentCell().removeCreature(this);
         world.getCell(0, 0).addCreature(this);
-
-        System.out.println(name + " died.");
 
         if (this instanceof Player) {
             try {
@@ -288,6 +289,10 @@ public class Creature {
         return damage;
     }
 
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
     public WorldCell getCurrentCell() {
         return world.getCell(x, y);
     }
@@ -333,11 +338,29 @@ public class Creature {
         Creature victim = getCurrentCell().getCreature(actionTargetID);
 
         // check if victim already left cell
-        if (victim == null)
+        if (victim == null) {
+            System.out.println("victim is null");
             return;
+        }
+
+        getCurrentCell().getPlayers().forEach(p -> {
+            try {
+                NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, getName() + " attacking " + victim.getName() + " for " + damage + " damage", "")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         // TODO: change to real value
-        victim.damage(getDamage(), additionalInt);
+        victim.damage(getDamage(), attackMode);
+
+        getCurrentCell().getPlayers().forEach(p -> {
+            try {
+                NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, victim.getName() + " has " + victim.getHP() + " HP left", "")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         try {
             NetLib.send(name, new PacketUnblockInput());
@@ -349,7 +372,13 @@ public class Creature {
     public void attack(int targetID, int mode) {
         setState(State.ATTACKING, 100);
         actionTargetID = targetID;
-        additionalInt = mode;
+        attackMode = mode;
+    }
+
+    public enum Type {
+        CREATURE,
+        NPC,
+        PLAYER
     }
 
     public enum State {

@@ -81,6 +81,7 @@ public class Server {
                 p = new Player(world, c.name);
                 p.setX(startX);
                 p.setY(startY);
+                p.setDamage(10);
 
                 p.setMaxHP(10);
                 p.maxHP();
