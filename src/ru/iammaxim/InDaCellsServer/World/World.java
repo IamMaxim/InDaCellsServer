@@ -8,11 +8,14 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class World {
-    private String name;
-
     // {x, {y, cell}}
     private final HashMap<Integer, HashMap<Integer, WorldCell>> cells = new HashMap<>();
+    private String name;
     private HashMap<String, Player> players = new HashMap<>();
+
+    public World(String name) {
+        this.name = name;
+    }
 
     public Player getPlayer(String name) {
         return players.get(name);
@@ -34,10 +37,6 @@ public class World {
         if (row == null)
             return null;
         return row.get(y);
-    }
-
-    public World(String name) {
-        this.name = name;
     }
 
     @Override

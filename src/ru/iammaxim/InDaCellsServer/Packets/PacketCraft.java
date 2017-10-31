@@ -1,12 +1,12 @@
 package ru.iammaxim.InDaCellsServer.Packets;
 
+import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.NetLib.Packet;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import ru.iammaxim.InDaCellsServer.Items.Item;
-import ru.iammaxim.NetLib.Packet;
 
 /**
  * Created by maxim on 10/29/17.

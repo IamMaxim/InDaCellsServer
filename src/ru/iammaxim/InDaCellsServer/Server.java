@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Server {
-    public World world;
     public static final long tickTimeNanos = 10000000; // 0.01sec
     public static final int startX = 0, startY = 0;
+    public World world;
 
     public Server() {
         world = new World("World");
@@ -175,6 +175,14 @@ public class Server {
                         }
                     }
                 }
+            }
+        });
+
+        NetBus.register(PacketRequestQuestList.class, (c, p) -> {
+            try {
+                NetLib.send(c.name, new PacketQuestList(world.getPlayer(c.name).getQuests()));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
     }

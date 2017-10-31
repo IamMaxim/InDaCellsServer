@@ -144,6 +144,9 @@ public class Client {
                 case "cell":
                     printCurrentCell();
                     break;
+                case "quests":
+                    NetLib.sendToServer(new PacketRequestQuestList());
+                    break;
             }
         }
     }
@@ -198,6 +201,11 @@ public class Client {
                 System.out.println("Info: " + packet.element.message);
             } else if (packet.element.type == LogElement.Type.MESSAGE)
                 System.out.println(packet.element.nick + ": " + packet.element.message);
+        });
+
+        NetBus.register(PacketQuestList.class, (c, p) -> {
+            System.out.println("Quests:");
+            ((PacketQuestList) p).questNames.forEach(System.out::println);
         });
     }
 

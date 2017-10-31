@@ -191,13 +191,6 @@ public class Creature {
     public void die() {
         isAlive = false;
 
-        System.out.println(name + " died.");
-
-        System.out.println("Players this cell: " + getCurrentCell().getPlayers());
-
-        System.out.println("Creatures this cell:");
-        getCurrentCell().getCreatures().forEach(c -> System.out.println(c.type + " " + c.getName()));
-
         getCurrentCell().getPlayers().forEach(p -> {
             try {
                 NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, getName() + " died.", "")));
@@ -351,16 +344,16 @@ public class Creature {
             }
         });
 
-        // TODO: change to real value
         victim.damage(getDamage(), attackMode);
 
-        getCurrentCell().getPlayers().forEach(p -> {
-            try {
-                NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, victim.getName() + " has " + victim.getHP() + " HP left", "")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        if (victim.isAlive())
+            getCurrentCell().getPlayers().forEach(p -> {
+                try {
+                    NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, victim.getName() + " has " + victim.getHP() + " HP left", "")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
 
         try {
             NetLib.send(name, new PacketUnblockInput());

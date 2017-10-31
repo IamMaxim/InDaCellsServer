@@ -6,5 +6,6 @@ import java.io.IOException;
 
 public abstract class Packet {
     abstract public void write(DataOutputStream dos) throws IOException;
+
     abstract public void read(DataInputStream dis) throws IOException;
 }

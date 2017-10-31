@@ -1,7 +1,6 @@
 package ru.iammaxim.InDaCellsServer.Activators;
 
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
-import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.OnActivate;
 import ru.iammaxim.InDaCellsServer.Scripts;
 
@@ -17,15 +16,20 @@ public class Activator {
     public Activator() {
     }
 
-    public Activator setDescription(String s) {
-        this.description = s;
-        return this;
-    }
-
     public Activator(int id, String name) {
         this.id = id;
         this.name = name;
 //        this.id = (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
+    public static Activator read(DataInputStream dis) throws IOException {
+        Activator activator = new Activator();
+
+        activator.id = dis.readInt();
+        activator.name = dis.readUTF();
+        activator.description = dis.readUTF();
+
+        return activator;
     }
 
     public void activate(Creature c) {
@@ -43,16 +47,6 @@ public class Activator {
         dos.writeUTF(description);
     }
 
-    public static Activator read(DataInputStream dis) throws IOException {
-        Activator activator = new Activator();
-
-        activator.id = dis.readInt();
-        activator.name = dis.readUTF();
-        activator.description = dis.readUTF();
-
-        return activator;
-    }
-
     public String getName() {
         return name;
     }
@@ -63,5 +57,10 @@ public class Activator {
 
     public String getDescription() {
         return description;
+    }
+
+    public Activator setDescription(String s) {
+        this.description = s;
+        return this;
     }
 }

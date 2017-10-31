@@ -1,10 +1,10 @@
 package ru.iammaxim.InDaCellsServer.Packets;
 
+import ru.iammaxim.NetLib.Packet;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import ru.iammaxim.NetLib.Packet;
 
 public class PacketSendMessage extends Packet {
     public String message;
@@ -13,7 +13,7 @@ public class PacketSendMessage extends Packet {
         message = "message";
     }
 
-    public PacketSendMessage(String message){
+    public PacketSendMessage(String message) {
         this.message = message;
     }
 

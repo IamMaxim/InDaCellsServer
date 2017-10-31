@@ -8,13 +8,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class PacketInventoryChange extends Packet {
-    public enum Type {
-        ADD,
-        UNEQUIP,
-        REMOVE,
-        EQUIP
-    }
-
     public Type type;
     public int index;
     public Item item;
@@ -66,5 +59,12 @@ public class PacketInventoryChange extends Packet {
             index = dis.readInt();
         } else if (type == Type.UNEQUIP)
             slot = Item.Type.values()[dis.readInt()];
+    }
+
+    public enum Type {
+        ADD,
+        UNEQUIP,
+        REMOVE,
+        EQUIP
     }
 }

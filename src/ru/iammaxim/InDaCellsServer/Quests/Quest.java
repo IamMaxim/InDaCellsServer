@@ -21,11 +21,6 @@ public abstract class Quest {
     public Quest(int id, String title) {
         this.id = id;
         this.title = title;
-//        this.currentStage = stages.get(0);
-    }
-
-    public void setFirstStage() {
-        this.currentStage = stages.get(0);
     }
 
     public static void registerQuest(Quest q) {
@@ -38,6 +33,10 @@ public abstract class Quest {
 
         registerQuest(new PeaceMakers1(2, world, "Квест Миротворцев"));
         registerQuest(new PeaceMakersDogs(3, world, "Защитник"));
+    }
+
+    public void setFirstStage() {
+        this.currentStage = stages.get(0);
     }
 
     public void onQuestEnd(Human p) {

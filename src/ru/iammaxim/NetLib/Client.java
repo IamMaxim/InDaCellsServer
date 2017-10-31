@@ -4,13 +4,13 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client {
-    private Socket socket;
+    public final Object lock = new Object();
     public InputStream is;
     public OutputStream os;
     public DataOutputStream dos;
     public DataInputStream dis;
     public String name;
-    public final Object lock = new Object();
+    private Socket socket;
 
     public Client(Socket socket, boolean hasName) throws IOException {
         this.socket = socket;

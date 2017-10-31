@@ -5,7 +5,6 @@ import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.NPCs.GeorgRaidersLeader;
 import ru.iammaxim.InDaCellsServer.Creatures.NPCs.TimTrasher;
-import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.Quests.QuestLines;

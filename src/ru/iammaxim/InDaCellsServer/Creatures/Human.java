@@ -17,11 +17,11 @@ public class Human extends Creature {
     protected ArrayList<Item> inventory = new ArrayList<>();
     protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected HashMap<Attribute, Float> attributes = new HashMap<>();
-    private ArrayList<Integer> questsDone = new ArrayList<>();
     protected float hunger;
     protected float maxHunger;
     protected float sp;
     protected float maxSP;
+    private ArrayList<Integer> questsDone = new ArrayList<>();
 
     public Human(World world, String name) {
         super(world, name);
@@ -120,14 +120,6 @@ public class Human extends Creature {
         return hunger;
     }
 
-    public void setMaxHunger(float hunger) {
-        maxHunger = hunger;
-    }
-
-    public void setMaxSP(float maxSP) {
-        this.maxSP = maxSP;
-    }
-
     public void maxSP() {
         sp = maxSP;
     }
@@ -144,12 +136,24 @@ public class Human extends Creature {
         return maxHunger;
     }
 
+    public void setMaxHunger(float hunger) {
+        maxHunger = hunger;
+    }
+
     public float getMaxSP() {
         return maxSP;
+    }
+
+    public void setMaxSP(float maxSP) {
+        this.maxSP = maxSP;
     }
 
     public void pickup(int targetID) {
         setState(State.PICKING_UP, 50);
         actionTargetID = targetID;
+    }
+
+    public ArrayList<Quest> getQuests() {
+        return attachedQuests;
     }
 }

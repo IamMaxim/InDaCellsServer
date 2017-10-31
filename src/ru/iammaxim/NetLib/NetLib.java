@@ -6,13 +6,12 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class NetLib {
+    private static final HashMap<String, Client> clients = new HashMap<>();
     private static ServerSocket ss;
     private static Client server;
-    private static final HashMap<String, Client> clients = new HashMap<>();
     private static HashMap<Integer, Class<? extends Packet>> packets = new HashMap<>();
     private static HashMap<Class<? extends Packet>, Integer> packetIds = new HashMap<>();
     private static OnClientConnect onClientConnect;
@@ -36,6 +35,8 @@ public class NetLib {
         register(counter++, PacketInventory.class);
         register(counter++, PacketInventoryChange.class);
         register(counter++, PacketMove.class);
+        register(counter++, PacketQuestList.class);
+        register(counter++, PacketRequestQuestList.class);
         register(counter++, PacketStartAction.class);
         register(counter++, PacketStats.class);
         register(counter++, PacketUnblockInput.class);

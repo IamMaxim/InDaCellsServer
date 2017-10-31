@@ -1,24 +1,16 @@
 package ru.iammaxim.InDaCellsServer.Packets;
 
+import ru.iammaxim.NetLib.Packet;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import ru.iammaxim.NetLib.Packet;
 
 /**
  * Created by maxim on 10/28/17.
  */
 
 public class PacketDoAction extends Packet {
-    public enum Type {
-        ATTACK,
-        DEFEND,
-        ACTIVATE,
-        PICKUP_ITEM,
-        TALK
-    }
-
     public Type type;
     public int targetID;
     public int additionalInt = 0;
@@ -48,5 +40,13 @@ public class PacketDoAction extends Packet {
         type = Type.values()[dis.readInt()];
         targetID = dis.readInt();
         additionalInt = dis.readInt();
+    }
+
+    public enum Type {
+        ATTACK,
+        DEFEND,
+        ACTIVATE,
+        PICKUP_ITEM,
+        TALK
     }
 }

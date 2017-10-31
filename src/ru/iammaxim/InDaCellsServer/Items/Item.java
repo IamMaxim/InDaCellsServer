@@ -13,8 +13,23 @@ public class Item {
     public final int itemID;
     public final String name;
     public final Type type;
-    private String description = "";
     public int id;
+    private String description = "";
+
+    public Item(int itemID, Type type, String name, String description) {
+        this.itemID = itemID;
+        this.type = type;
+        this.name = name;
+        this.description = description;
+        this.id = (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
+    public Item(int itemID, Type type, String name) {
+        this.itemID = itemID;
+        this.type = type;
+        this.name = name;
+        this.id = (int) (Math.random() * Integer.MAX_VALUE);
+    }
 
     public static void registerItem(Item item) {
         items.put(item.itemID, item);
@@ -67,19 +82,16 @@ public class Item {
         registerWeapons();
     }
 
-    public Item(int itemID, Type type, String name, String description) {
-        this.itemID = itemID;
-        this.type = type;
-        this.name = name;
-        this.description = description;
-        this.id = (int) (Math.random() * Integer.MAX_VALUE);
-    }
+    public static Item read(DataInputStream dis) throws IOException {
+        Item item = new Item(
+                dis.readInt(),
+                Type.values()[dis.readInt()],
+                dis.readUTF(),
+                dis.readUTF()
+        );
+        item.id = dis.readInt();
 
-    public Item(int itemID, Type type, String name) {
-        this.itemID = itemID;
-        this.type = type;
-        this.name = name;
-        this.id = (int) (Math.random() * Integer.MAX_VALUE);
+        return item;
     }
 
     public Item clone() {
@@ -94,20 +106,13 @@ public class Item {
         dos.writeInt(id);
     }
 
-    public static Item read(DataInputStream dis) throws IOException {
-        Item item = new Item(
-                dis.readInt(),
-                Type.values()[dis.readInt()],
-                dis.readUTF(),
-                dis.readUTF()
-        );
-        item.id = dis.readInt();
-
-        return item;
-    }
-
     public int getID() {
         return id;
+    }
+
+    public Item setID(int id) {
+        this.id = id;
+        return this;
     }
 
     public String getName() {
@@ -116,11 +121,6 @@ public class Item {
 
     public String getDescription() {
         return description;
-    }
-
-    public Item setID(int id) {
-        this.id = id;
-        return this;
     }
 
     public Item setDescription(String description) {

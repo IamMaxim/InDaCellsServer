@@ -32,9 +32,38 @@ public class WorldCell {
         this.y = y;
     }
 
-    public WorldCell setName(String name) {
-        this.name = name;
-        return this;
+    public static WorldCell read(World world, DataInputStream dis) throws IOException {
+        WorldCell cell = new WorldCell();
+
+        cell.x = dis.readInt();
+        cell.y = dis.readInt();
+        cell.name = dis.readUTF();
+        cell.description = dis.readUTF();
+
+        int creaturesCount = dis.readInt();
+        for (int i = 0; i < creaturesCount; i++) {
+            Creature c = Creature.read(world, dis);
+            cell.creatures.put(c.getID(), c);
+        }
+
+        int activatorsCount = dis.readInt();
+        for (int i = 0; i < activatorsCount; i++) {
+            Activator a = Activator.read(dis);
+            cell.activators.put(a.getID(), a);
+        }
+
+        int itemsCount = dis.readInt();
+        for (int i = 0; i < itemsCount; i++) {
+            Item item = Item.read(dis);
+            System.out.println("Putting item with ID: " + item.getID());
+            cell.items.put(item.getID(), item);
+        }
+
+        cell.getPlayers().forEach(p -> {
+            world.addPlayer(p.getName(), p);
+        });
+
+        return cell;
     }
 
     @Override
@@ -57,6 +86,8 @@ public class WorldCell {
     public WorldCell addCreature(Creature creature) {
         System.out.println("[" + x + ", " + y + "] Adding creature " + creature.getName());
         creatures.put(creature.getID(), creature);
+        creature.setX(getX());
+        creature.setY(getY());
         update();
         return this;
     }
@@ -93,46 +124,20 @@ public class WorldCell {
         }
     }
 
-    public static WorldCell read(World world, DataInputStream dis) throws IOException {
-        WorldCell cell = new WorldCell();
-
-        cell.x = dis.readInt();
-        cell.y = dis.readInt();
-        cell.name = dis.readUTF();
-        cell.description = dis.readUTF();
-
-        int creaturesCount = dis.readInt();
-        for (int i = 0; i < creaturesCount; i++) {
-            Creature c = Creature.read(world, dis);
-            cell.creatures.put(c.getID(), c);
-        }
-
-        int activatorsCount = dis.readInt();
-        for (int i = 0; i < activatorsCount; i++) {
-            Activator a = Activator.read(dis);
-            cell.activators.put(a.getID(), a);
-        }
-
-        int itemsCount = dis.readInt();
-        for (int i = 0; i < itemsCount; i++) {
-            Item item = Item.read(dis);
-            System.out.println("Putting item with ID: " + item.getID());
-            cell.items.put(item.getID(), item);
-        }
-
-        cell.getPlayers().forEach(p -> {
-            world.addPlayer(p.getName(), p);
-        });
-
-        return cell;
-    }
-
     public int getY() {
         return y;
     }
 
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public int getX() {
         return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
     }
 
     public Creature getCreature(int id) {
@@ -158,14 +163,6 @@ public class WorldCell {
 
     public Collection<Activator> getActivators() {
         return activators.values();
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     public String getDescription() {
@@ -203,5 +200,10 @@ public class WorldCell {
 
     public String getName() {
         return name;
+    }
+
+    public WorldCell setName(String name) {
+        this.name = name;
+        return this;
     }
 }

@@ -42,17 +42,17 @@ public abstract class Stage {
         return attachedQuest;
     }
 
-    enum State {
-        CLOSED,
-        IN_PROGRESS,
-        FINISHED
+    public State getState() {
+        return state;
     }
 
     public void setState(State state) {
         this.state = state;
     }
 
-    public State getState() {
-        return state;
+    enum State {
+        CLOSED,
+        IN_PROGRESS,
+        FINISHED
     }
 }

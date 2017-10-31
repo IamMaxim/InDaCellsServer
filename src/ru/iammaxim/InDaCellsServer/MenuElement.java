@@ -5,17 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class MenuElement {
-    public enum Type {
-        PLAYER,
-        ITEM,
-        NPC,
-        CREATURE,
-        ACTIVATOR,
-        HEADER
-    }
-
     public Type type;
-
     public String text;
     public int targetID;
     public float additionalFloat = 0;
@@ -25,6 +15,15 @@ public class MenuElement {
         this.type = type;
         this.text = text;
         this.targetID = targetID;
+    }
+
+    public static MenuElement read(DataInputStream dis) throws IOException {
+        return new MenuElement(
+                Type.values()[dis.readInt()],
+                dis.readUTF(),
+                dis.readInt()
+        ).setAdditionalFloat(dis.readFloat())
+                .setAdditionalString(dis.readUTF());
     }
 
     public MenuElement setAdditionalFloat(float f) {
@@ -45,12 +44,12 @@ public class MenuElement {
         dos.writeUTF(additionalString);
     }
 
-    public static MenuElement read(DataInputStream dis) throws IOException {
-        return new MenuElement(
-                Type.values()[dis.readInt()],
-                dis.readUTF(),
-                dis.readInt()
-        ).setAdditionalFloat(dis.readFloat())
-                .setAdditionalString(dis.readUTF());
+    public enum Type {
+        PLAYER,
+        ITEM,
+        NPC,
+        CREATURE,
+        ACTIVATOR,
+        HEADER
     }
 }
