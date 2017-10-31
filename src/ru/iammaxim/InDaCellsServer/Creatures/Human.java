@@ -2,7 +2,6 @@ package ru.iammaxim.InDaCellsServer.Creatures;
 
 import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.Packets.PacketInventoryChange;
-import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.NetLib.NetLib;
 
@@ -15,29 +14,14 @@ import java.util.Iterator;
 public class Human extends Creature {
     protected HashMap<Item.Type, Integer> equippedItems = new HashMap<>();
     protected ArrayList<Item> inventory = new ArrayList<>();
-    protected ArrayList<Quest> attachedQuests = new ArrayList<>();
     protected HashMap<Attribute, Float> attributes = new HashMap<>();
     protected float hunger;
     protected float maxHunger;
     protected float sp;
     protected float maxSP;
-    private ArrayList<Integer> questsDone = new ArrayList<>();
 
     public Human(World world, String name) {
         super(world, name);
-    }
-
-    public void acceptQuest(int qId) {
-        Quest q = Quest.quests.get(qId);
-        if (questsDone.contains(qId) || attachedQuests.contains(q)) return;
-        attachedQuests.add(q);
-    }
-
-    public void questDone(int qId) {
-        Quest q = Quest.quests.get(qId);
-        if (!attachedQuests.contains(q)) return;
-        attachedQuests.remove(q);
-        questsDone.add(qId);
     }
 
     @Override
@@ -87,7 +71,6 @@ public class Human extends Creature {
 
     public void addItem(Item item) {
         inventory.add(item);
-        attachedQuests.forEach(q -> q.getCurrentStage().onItemAdd(this, item));
     }
 
     public void removeItem(Item item) {
@@ -151,9 +134,5 @@ public class Human extends Creature {
     public void pickup(int targetID) {
         setState(State.PICKING_UP, 50);
         actionTargetID = targetID;
-    }
-
-    public ArrayList<Quest> getQuests() {
-        return attachedQuests;
     }
 }

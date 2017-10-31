@@ -1,14 +1,15 @@
 package ru.iammaxim.InDaCellsServer.Quests;
 
+import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
-import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
+import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.World.WorldCell;
 
-public abstract class Stage {
+public class Stage {
     private String description;
     private State state;
-
     private Quest attachedQuest;
 
     public Stage(Quest attachedQuest, String desc) {
@@ -22,16 +23,32 @@ public abstract class Stage {
         this.state = state;
     }
 
-    public abstract void onItemAdd(Human p, Item item);
+    public void onActivate(Player p, Activator a) {
 
-    public abstract void onTalk(Human p, NPC npc);
+    }
 
-    public abstract void onKill(Human p, Creature creature);
+    public void onItemAdd(Player p, Item item) {
 
-    public void done(Human p) {
-        this.state = State.FINISHED;
-        this.getAttachedQuest().reevaluate(p);
-        System.out.println("Reevaluating");
+    }
+
+    public void onTalk(Player p, NPC npc) {
+
+    }
+
+    public void onKill(Player p, Creature creature) {
+
+    }
+
+    public void onComplete(Player p) {
+
+    }
+
+    public void onStart(Player p) {
+
+    }
+
+    public void onDamage(Player p, Creature victim) {
+
     }
 
     public String getDescription() {
@@ -48,6 +65,14 @@ public abstract class Stage {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public void onItemRemove(Player p, Item item) {
+
+    }
+
+    public void onMove(Player player, WorldCell cell) {
+
     }
 
     enum State {

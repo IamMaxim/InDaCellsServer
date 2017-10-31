@@ -17,7 +17,7 @@ public class NPC extends Human {
     }
 
 
-    public void speak(Human p, String text) {
+    public void say(Human p, String text) {
         try {
             NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, text, name)));
             sendQuestsToClient(p);
@@ -38,8 +38,6 @@ public class NPC extends Human {
             for (Quest quest : npcAttachedQuests) {
                 NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, quest.getTitle(), name)));
             }
-            Quest q = npcAttachedQuests.get(0);
-            p.acceptQuest(q.id);
         } catch (IOException e) {
             e.printStackTrace();
         }

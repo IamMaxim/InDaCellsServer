@@ -1,6 +1,6 @@
 package ru.iammaxim.InDaCellsServer.Packets;
 
-import ru.iammaxim.InDaCellsServer.Quests.Quest;
+import ru.iammaxim.InDaCellsServer.Quests.QuestState;
 import ru.iammaxim.NetLib.Packet;
 
 import java.io.DataInputStream;
@@ -14,8 +14,8 @@ public class PacketQuestList extends Packet {
     public PacketQuestList() {
     }
 
-    public PacketQuestList(ArrayList<Quest> quests) {
-        quests.forEach(q -> questNames.add(q.title));
+    public PacketQuestList(ArrayList<QuestState> quests) {
+        quests.forEach(q -> questNames.add(q.getQuest().title));
     }
 
 
