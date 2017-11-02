@@ -4,21 +4,25 @@ import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
+import ru.iammaxim.InDaCellsServer.Dialogs.DialogTopic;
 import ru.iammaxim.InDaCellsServer.Items.Item;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 
-public class Stage {
+import java.util.ArrayList;
+
+public class QuestStage {
     private String description;
     private State state;
     private Quest attachedQuest;
+    private ArrayList<DialogTopic> entries = new ArrayList<>();
 
-    public Stage(Quest attachedQuest, String desc) {
+    public QuestStage(Quest attachedQuest, String description) {
         this.attachedQuest = attachedQuest;
-        this.description = desc;
+        this.description = description;
         this.state = State.CLOSED;
     }
 
-    public Stage(Quest attachedQuest, String desc, State state) {
+    public QuestStage(Quest attachedQuest, String desc, State state) {
         this(attachedQuest, desc);
         this.state = state;
     }
@@ -31,7 +35,7 @@ public class Stage {
 
     }
 
-    public void onTalk(Player p, NPC npc) {
+    public void onTalk(Player p, NPC npc, String topic) {
 
     }
 
@@ -44,7 +48,7 @@ public class Stage {
     }
 
     public void onStart(Player p) {
-
+        p.addMessage(attachedQuest.title, description);
     }
 
     public void onDamage(Player p, Creature victim) {
@@ -72,6 +76,20 @@ public class Stage {
     }
 
     public void onMove(Player player, WorldCell cell) {
+
+    }
+
+    public ArrayList<DialogTopic> getEntries() {
+        ArrayList<DialogTopic> entries1 = new ArrayList<>();
+        entries1.addAll(entries);
+        return entries1;
+    }
+
+    public void addDialogEntry(DialogTopic e) {
+        entries.add(e);
+    }
+
+    public void onAttack(Player player, Creature creature) {
 
     }
 

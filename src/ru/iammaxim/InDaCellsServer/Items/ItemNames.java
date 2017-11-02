@@ -1,6 +1,6 @@
 package ru.iammaxim.InDaCellsServer.Items;
 
-public class ItemName {
+public class ItemNames {
     // misc
     public static final String
             item_plank = "Доска",

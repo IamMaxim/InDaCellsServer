@@ -1,6 +1,6 @@
 package ru.iammaxim.InDaCellsServer.Quests;
 
-import ru.iammaxim.InDaCellsServer.Creatures.Human;
+import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Quests.QuestList.TestQuest1;
 import ru.iammaxim.InDaCellsServer.World.World;
 
@@ -12,7 +12,7 @@ public abstract class Quest {
 
     public final int id;
     public final String title;
-    public final ArrayList<Stage> stages = new ArrayList<>();
+    public final ArrayList<QuestStage> stages = new ArrayList<>();
 
     public Quest(int id, String title) {
         this.id = id;
@@ -33,11 +33,11 @@ public abstract class Quest {
         registerQuest(new TestQuest1(0, "Test quest"));
     }
 
-    public void onQuestEnd(Human p) {
+    public void onQuestEnd(Player p) {
 
     }
 
-    public void addStage(Stage stage) {
+    public void addStage(QuestStage stage) {
         stages.add(stage);
     }
 
@@ -49,7 +49,7 @@ public abstract class Quest {
         return title;
     }
 
-    public Stage getStage(int stage) {
-        return stages.get(stage);
+    public QuestStage getStage(int stageIndex) {
+        return stages.get(stageIndex);
     }
 }

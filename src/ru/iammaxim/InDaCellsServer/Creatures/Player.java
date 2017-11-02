@@ -1,11 +1,10 @@
 package ru.iammaxim.InDaCellsServer.Creatures;
 
 
+import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Items.Item;
-import ru.iammaxim.InDaCellsServer.Packets.PacketInventoryChange;
-import ru.iammaxim.InDaCellsServer.Packets.PacketStartAction;
-import ru.iammaxim.InDaCellsServer.Packets.PacketStats;
-import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
+import ru.iammaxim.InDaCellsServer.LogElement;
+import ru.iammaxim.InDaCellsServer.Packets.*;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.Quests.QuestState;
 import ru.iammaxim.InDaCellsServer.World.World;
@@ -18,6 +17,17 @@ import java.util.HashMap;
 
 public class Player extends Human {
     protected int statsUpdateTimer = 0;
+
+    @Override
+    public void die() {
+        super.die();
+        try {
+            NetLib.send(name, new PacketCell(world.getCell(0, 0)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected HashMap<Integer, QuestState> attachedQuests = new HashMap<>();
 
 
@@ -54,6 +64,12 @@ public class Player extends Human {
         questState.complete();
     }
 
+    @Override
+    protected void doPickup() {
+        super.doPickup();
+        unblockInput();
+    }
+
     public ArrayList<QuestState> getQuests() {
         ArrayList<QuestState> quests = new ArrayList<>();
         attachedQuests.forEach((id, q) -> {
@@ -87,11 +103,25 @@ public class Player extends Human {
     }
 
     @Override
+    protected void doActivate() {
+        super.doActivate();
+        unblockInput();
+        Activator a = getCurrentCell().getActivator(actionTargetID);
+        if (a != null)
+            getQuests().forEach(q -> q.getCurrentStage().onActivate(this, a));
+    }
+
+    @Override
     protected void doAttack() {
         super.doAttack();
+        unblockInput();
 
-        if (getCurrentCell().getCreature(actionTargetID) != null && !getCurrentCell().getCreature(actionTargetID).isAlive())
-            getQuests().forEach(q -> q.getCurrentStage().onKill(this, getCurrentCell().getCreature(actionTargetID)));
+        Creature c = getCurrentCell().getCreature(actionTargetID);
+        if (c != null) {
+            getQuests().forEach(q -> q.getCurrentStage().onAttack(this, c));
+            if (!c.isAlive())
+                getQuests().forEach(q -> q.getCurrentStage().onKill(this, c));
+        }
     }
 
     @Override
@@ -104,23 +134,35 @@ public class Player extends Human {
         }
     }
 
-    @Override
-    protected void doMove() {
-        super.doMove();
+    public void unblockInput() {
         try {
             NetLib.send(name, new PacketUnblockInput());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        getQuests().forEach(q -> q.getCurrentStage().onMove(this, getCurrentCell()));
     }
 
-    public void talk(int targetID) {
+    @Override
+    protected boolean doMove() {
+        boolean moved = super.doMove();
+        this.unblockInput();
+        if (moved) {
+            WorldCell cell = getCurrentCell();
+            if (cell.getDescription() != null && !cell.getDescription().isEmpty()) {
+                this.addMessage(cell.getDescription());
+            }
+            getQuests().forEach(q -> q.getCurrentStage().onMove(this, getCurrentCell()));
+        }
+        return moved;
+    }
+
+    public void talk(int targetID, String topic) {
         WorldCell cell = getCurrentCell();
         NPC npc = cell.getNPC(targetID);
-        if (npc != null)
-            npc.say(this, "Здравствуй, путник!");
-        getQuests().forEach(q -> q.getCurrentStage().onTalk(this, npc));
+        if (npc != null) {
+            npc.say(this, topic);
+            getQuests().forEach(q -> q.getCurrentStage().onTalk(this, npc, topic));
+        }
     }
 
     @Override
@@ -137,5 +179,25 @@ public class Player extends Human {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void addMessage(String nick, String message) {
+        try {
+            NetLib.send(name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, message, nick)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addMessage(String message) {
+        try {
+            NetLib.send(name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, message, "")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public QuestState getQuestState(int id) {
+        return attachedQuests.get(id);
     }
 }

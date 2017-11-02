@@ -99,6 +99,23 @@ public class Human extends Creature {
         inventory.remove(index);
     }
 
+    public Item getItem(int id) {
+        for (Item item : inventory) {
+            if (item.id == id)
+                return item;
+        }
+        return null;
+    }
+
+    public void removeItemByID(int id) {
+        for (int i = 0; i < inventory.size(); i++) {
+            if (inventory.get(i).id == id) {
+                inventory.remove(i);
+                break;
+            }
+        }
+    }
+
     public float getHunger() {
         return hunger;
     }

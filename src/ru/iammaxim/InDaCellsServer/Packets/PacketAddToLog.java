@@ -17,6 +17,10 @@ public class PacketAddToLog extends Packet {
         this.element = element;
     }
 
+    public PacketAddToLog(String message) {
+        this.element = new LogElement(LogElement.Type.INFO, message, "");
+    }
+
     @Override
     public void write(DataOutputStream dos) throws IOException {
         element.write(dos);

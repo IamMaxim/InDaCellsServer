@@ -132,11 +132,24 @@ public class Client {
                         continue;
                     }
 
+                    String topic = "";
+
+                    if (tokens.length > 2) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 2; i < tokens.length; i++) {
+                            sb.append(tokens[i]);
+                            if (i < tokens.length - 1)
+                                sb.append(" ");
+                        }
+                        topic = sb.toString();
+                    }
+
                     try {
                         int index = Integer.parseInt(tokens[1]) - 1;
                         MenuElement element = activableElements.get(index);
 
-                        NetLib.sendToServer(new PacketDoAction(PacketDoAction.Type.TALK, element.targetID));
+                        System.out.println("Topic: " + topic);
+                        NetLib.sendToServer(new PacketDoAction(PacketDoAction.Type.TALK, element.targetID).setAdditionalString(topic));
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid index");
                     }

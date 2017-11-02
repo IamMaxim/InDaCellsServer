@@ -3,10 +3,7 @@ package ru.iammaxim.InDaCellsServer.Creatures;
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Items.Item;
-import ru.iammaxim.InDaCellsServer.LogElement;
-import ru.iammaxim.InDaCellsServer.Packets.PacketAddToLog;
 import ru.iammaxim.InDaCellsServer.Packets.PacketCell;
-import ru.iammaxim.InDaCellsServer.Packets.PacketUnblockInput;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
 import ru.iammaxim.NetLib.NetLib;
@@ -54,7 +51,6 @@ public class Creature {
         this.name = name;
         this.world = world;
         id = (int) (Math.random() * Integer.MAX_VALUE);
-//        world.getCell(x, y).addCreature(this);
     }
 
     public static Creature read(World world, DataInputStream dis) throws IOException {
@@ -120,30 +116,21 @@ public class Creature {
         return id;
     }
 
-    protected void doMove() {
+    protected boolean doMove() {
         WorldCell oldCell = world.getCell(x, y);
         WorldCell newCell = world.getCell(newX, newY);
 
         if (oldCell == null || newCell == null) {
             System.out.println("Can't move from [" + x + ", " + y + "] to [" + newX + ", " + newY + "] because one of cells doesn't exist");
-        } else {
-            oldCell.removeCreature(this);
-            newCell.addCreature(this);
-
-            this.x = newX;
-            this.y = newY;
+            return false;
         }
 
-        if (this instanceof Player)
-            try {
-                NetLib.send(name, new PacketUnblockInput());
+        oldCell.removeCreature(this);
+        newCell.addCreature(this);
 
-                if (newCell != null && newCell.getDescription() != null && !newCell.getDescription().isEmpty()) {
-                    NetLib.send(name, new PacketAddToLog(new LogElement(LogElement.Type.MESSAGE, newCell.getDescription(), "World")));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        this.x = newX;
+        this.y = newY;
+        return true;
     }
 
     public void move(int newX, int newY) {
@@ -188,27 +175,15 @@ public class Creature {
             die();
     }
 
-    public void die() {
+    protected void die() {
         isAlive = false;
 
         getCurrentCell().getPlayers().forEach(p -> {
-            try {
-                NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, getName() + " died.", "")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            p.addMessage(getName() + " died.");
         });
 
         getCurrentCell().removeCreature(this);
         world.getCell(0, 0).addCreature(this);
-
-        if (this instanceof Player) {
-            try {
-                NetLib.send(name, new PacketCell(world.getCell(0, 0)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public boolean isAlive() {
@@ -236,7 +211,7 @@ public class Creature {
         }
     }
 
-    private void doPickup() {
+    protected void doPickup() {
         Iterator<Item> it = getCurrentCell().getItems().iterator();
 
         while (it.hasNext()) {
@@ -247,12 +222,6 @@ public class Creature {
                 world.getPlayer(name).addItem(i);
                 break;
             }
-        }
-
-        try {
-            NetLib.send(name, new PacketUnblockInput());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -270,12 +239,6 @@ public class Creature {
 
         if (a != null)
             a.activate(this);
-
-        try {
-            NetLib.send(name, new PacketUnblockInput());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public float getDamage() {
@@ -336,30 +299,12 @@ public class Creature {
             return;
         }
 
-        getCurrentCell().getPlayers().forEach(p -> {
-            try {
-                NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, getName() + " attacking " + victim.getName() + " for " + damage + " damage", "")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        getCurrentCell().getPlayers().forEach(p -> p.addMessage(getName() + " attacking " + victim.getName() + " for " + damage + " damage"));
 
         victim.damage(getDamage(), attackMode);
 
         if (victim.isAlive())
-            getCurrentCell().getPlayers().forEach(p -> {
-                try {
-                    NetLib.send(p.name, new PacketAddToLog(new LogElement(LogElement.Type.INFO, victim.getName() + " has " + victim.getHP() + " HP left", "")));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-
-        try {
-            NetLib.send(name, new PacketUnblockInput());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            getCurrentCell().getPlayers().forEach(p -> p.addMessage(victim.getName() + " has " + victim.getHP() + " HP left"));
     }
 
     public void attack(int targetID, int mode) {

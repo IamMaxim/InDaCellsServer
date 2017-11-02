@@ -2,7 +2,12 @@ package ru.iammaxim.InDaCellsServer;
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
+import ru.iammaxim.InDaCellsServer.Creatures.Human;
+import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
+import ru.iammaxim.InDaCellsServer.Dialogs.DialogTopic;
+import ru.iammaxim.InDaCellsServer.Items.Item;
+import ru.iammaxim.InDaCellsServer.Items.ItemWeapon;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
 import ru.iammaxim.InDaCellsServer.Packets.*;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
@@ -46,15 +51,22 @@ public class Server {
                 }
             }
 
+            world.getCell(0, 0).addCreature(
+                    new NPC(world, "Test NPC")
+                            .attachQuest(Quest.quests.get(0))
+                            .addTopic(new DialogTopic("Start TestQuest1", "Yay, hello there!") {
+                                @Override
+                                public void onSay(Player p) {
+                                    p.startQuest(0);
+                                }
+                            }));
+
+
             // debug things
             world.getCell(0, 1).addActivator(new Activator(2, "Item generator"));
             world.getCell(0, 1).addActivator(new Activator(3, "Weapon generator"));
             world.getCell(0, 1).addActivator(new Activator(4, "Armor generator"));
         }
-
-        WorldCreator.createNPCs(world);
-        WorldCreator.createMobs(world);
-        WorldCreator.createDescriptions(world);
     }
 
     public void tick() {
@@ -129,7 +141,7 @@ public class Server {
                         NetLib.send(c.name, new PacketStartAction("Picking up...", 0.5f));
                         break;
                     case TALK:
-                        world.getPlayer(c.name).talk(((PacketDoAction) p).targetID);
+                        world.getPlayer(c.name).talk(((PacketDoAction) p).targetID, ((PacketDoAction) p).additionalString);
                         break;
                 }
             } catch (IOException e) {
@@ -165,13 +177,8 @@ public class Server {
                 for (int y = player.getY() - 1; y <= player.getY() + 1; y++) {
                     WorldCell cell = world.getCell(x, y);
                     if (cell != null) {
-                        try {
-                            for (Player player1 : cell.getPlayers()) {
-                                NetLib.send(player1.getName(), new PacketAddToLog(
-                                        new LogElement(LogElement.Type.MESSAGE, message.message, player.getName())));
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        for (Player p : cell.getPlayers()) {
+                            p.addMessage(player.getName(), message.message);
                         }
                     }
                 }
@@ -184,6 +191,26 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        });
+
+        NetBus.register(PacketCraft.class, (c, p) -> {
+            Player player = world.getPlayer(c.name);
+            PacketCraft packet = (PacketCraft) p;
+            boolean hasAll = true;
+            for (Integer id : packet.ingredients) {
+                if (player.getItem(id) == null) {
+                    hasAll = false;
+                    player.addMessage("Couldn't craft because item with id " + id + " was not found in your inventory");
+                    break;
+                }
+            }
+
+            if (hasAll) {
+                packet.ingredients.forEach(player::removeItemByID);
+            }
+
+            Item item = Item.craft(packet.type, packet.name, packet.description, 1);
+            player.addItem(item);
         });
     }
 

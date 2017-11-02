@@ -1,6 +1,6 @@
 package ru.iammaxim.InDaCellsServer.Items;
 
-public class ItemsDescription {
+public class ItemsDescriptions {
     //Items
     public static final String item_plank = "Деревянная жердь бывшая частью крышки стола или куском дома.";
     public static final String item_iron_rod = "Каленый прут выломанный из забора или из стены.";

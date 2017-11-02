@@ -14,6 +14,7 @@ public class PacketDoAction extends Packet {
     public Type type;
     public int targetID;
     public int additionalInt = 0;
+    public String additionalString = "";
 
     public PacketDoAction() {
     }
@@ -28,11 +29,17 @@ public class PacketDoAction extends Packet {
         return this;
     }
 
+    public PacketDoAction setAdditionalString(String s) {
+        this.additionalString = s;
+        return this;
+    }
+
     @Override
     public void write(DataOutputStream dos) throws IOException {
         dos.writeInt(type.ordinal());
         dos.writeInt(targetID);
         dos.writeInt(additionalInt);
+        dos.writeUTF(additionalString);
     }
 
     @Override
@@ -40,6 +47,7 @@ public class PacketDoAction extends Packet {
         type = Type.values()[dis.readInt()];
         targetID = dis.readInt();
         additionalInt = dis.readInt();
+        additionalString = dis.readUTF();
     }
 
     public enum Type {
