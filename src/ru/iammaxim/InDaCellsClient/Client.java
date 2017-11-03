@@ -80,20 +80,26 @@ public class Client {
                         switch (element.type) {
                             case CREATURE:
                             case PLAYER:
-                                System.out.println("To attack " + element.text + " print \"attack " + (index + 1) + " <type>\"");
+                                System.out.println("To attack " + element.text + " type \"attack " + (index + 1) + " <type>\"");
                                 break;
                             case ITEM:
                                 NetLib.sendToServer(new PacketDoAction(PacketDoAction.Type.PICKUP_ITEM, element.targetID));
                                 break;
                             case NPC:
-                                System.out.println("To attack " + element.text + " print \"attack " + (index + 1) + " <type>\"");
-                                System.out.println("To talk to " + element.text + " print \"talk " + (index + 1) + "\"");
+                                System.out.println("To attack " + element.text + " type \"attack " + (index + 1) + " <type>\"");
+                                System.out.println("To talk to " + element.text + " type \"talk " + (index + 1) + "\"");
                                 break;
                             case ACTIVATOR:
                                 NetLib.sendToServer(new PacketDoAction(PacketDoAction.Type.ACTIVATE, element.targetID));
                                 break;
                             case HEADER:
                                 System.out.println("LOL, u r trying to activate a header?!? Seriously?");
+                                break;
+                            case ACTION:
+                                System.out.println("To do action, type \"doAction " + (index + 1) + "\"");
+                                break;
+                            case LOCATION:
+                                System.out.println("To go to location, type \"goto " + (index + 1) + "\"");
                                 break;
                         }
                     } catch (NumberFormatException e) {
@@ -160,6 +166,49 @@ public class Client {
                 case "quests":
                     NetLib.sendToServer(new PacketRequestQuestList());
                     break;
+                case "doAction":
+                    if (tokens.length < 2) {
+                        System.out.println("Invalid action");
+                        continue;
+                    }
+
+                    String action = "";
+
+                    if (tokens.length > 2) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 2; i < tokens.length; i++) {
+                            sb.append(tokens[i]);
+                            if (i < tokens.length - 1)
+                                sb.append(" ");
+                        }
+                        action = sb.toString();
+                    }
+
+                    NetLib.sendToServer(new PacketDoAction(PacketDoAction.Type.DO_ACTION, 0).setAdditionalString(action));
+                    break;
+                case "goto":
+                    if (tokens.length < 2) {
+                        System.out.println("Invalid index");
+                        continue;
+                    }
+
+
+                    int index = Integer.parseInt(tokens[1]) - 1;
+                    if (index < 0 || index >= activableElements.size()) {
+                        System.out.println("No element with such index");
+                        continue;
+                    }
+
+                    MenuElement element = activableElements.get(index);
+
+                    if (element.type != MenuElement.Type.LOCATION) {
+                        System.out.println("Element selected is not entrance");
+                        break;
+                    }
+
+                    NetLib.sendToServer(new PacketDoAction(PacketDoAction.Type.GO_TO, element.targetID));
+
+                    break;
             }
         }
     }
@@ -219,6 +268,12 @@ public class Client {
         NetBus.register(PacketQuestList.class, (c, p) -> {
             System.out.println("Quests:");
             ((PacketQuestList) p).questNames.forEach(System.out::println);
+        });
+
+        NetBus.register(PacketDialogTopics.class, (c, p) -> {
+            PacketDialogTopics packet = (PacketDialogTopics) p;
+            System.out.println("Available topics:");
+            packet.topics.forEach(System.out::println);
         });
     }
 

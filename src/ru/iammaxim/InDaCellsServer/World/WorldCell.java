@@ -17,19 +17,41 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class WorldCell {
-    private int x, y;
+    private int id;
+    private int x = 0, y = 0;
     private String name = "Wastelands";
     private String description = "";
+    private boolean isInterior;
     private HashMap<Integer, Creature> creatures = new HashMap();
     private HashMap<Integer, Activator> activators = new HashMap();
     private HashMap<Integer, Item> items = new HashMap();
+    private HashMap<Integer, Entrance> entrances = new HashMap<>();
 
-    public WorldCell() {
+    private WorldCell() {
+
     }
 
-    public WorldCell(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public WorldCell(boolean isInterior) {
+        this.isInterior = isInterior;
+        id = (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
+    public WorldCell setIsInterior(boolean isInterior) {
+        this.isInterior = isInterior;
+        return this;
+    }
+
+    public boolean isInterior() {
+        return isInterior;
+    }
+
+    public WorldCell setID(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public int getID() {
+        return id;
     }
 
     public static WorldCell read(World world, DataInputStream dis) throws IOException {
@@ -39,29 +61,34 @@ public class WorldCell {
         cell.y = dis.readInt();
         cell.name = dis.readUTF();
         cell.description = dis.readUTF();
-
-        int creaturesCount = dis.readInt();
-        for (int i = 0; i < creaturesCount; i++) {
-            Creature c = Creature.read(world, dis);
-            cell.creatures.put(c.getID(), c);
-        }
+        cell.isInterior = dis.readBoolean();
+        cell.id = dis.readInt();
 
         int activatorsCount = dis.readInt();
         for (int i = 0; i < activatorsCount; i++) {
             Activator a = Activator.read(dis);
-            cell.activators.put(a.getID(), a);
+            cell.addActivator(a);
         }
 
         int itemsCount = dis.readInt();
         for (int i = 0; i < itemsCount; i++) {
             Item item = Item.read(dis);
-            System.out.println("Putting item with ID: " + item.getID());
-            cell.items.put(item.getID(), item);
+            cell.addItem(item);
         }
 
-        cell.getPlayers().forEach(p -> {
-            world.addPlayer(p.getName(), p);
-        });
+        int entrancesCount = dis.readInt();
+        for (int i = 0; i < entrancesCount; i++) {
+            Entrance e = Entrance.read(world, dis);
+            cell.addEntrance(e);
+        }
+
+        int creaturesCount = dis.readInt();
+        for (int i = 0; i < creaturesCount; i++) {
+            Creature c = Creature.read(world, dis);
+            cell.addCreature(c);
+        }
+
+        cell.getPlayers().forEach(world::addPlayer);
 
         return cell;
     }
@@ -84,16 +111,16 @@ public class WorldCell {
     }
 
     public WorldCell addCreature(Creature creature) {
-        System.out.println("[" + x + ", " + y + "] Adding creature " + creature.getName());
         creatures.put(creature.getID(), creature);
         creature.setX(getX());
         creature.setY(getY());
+        creature.setCellID(id);
         update();
         return this;
     }
 
     public void removeCreature(Creature creature) {
-        System.out.println("[" + x + ", " + y + "] Removing " + creature.getName());
+//        System.out.println("[" + x + ", " + y + "] Removing " + creature.getName());
         creatures.remove(creature.getID());
         update();
     }
@@ -107,11 +134,8 @@ public class WorldCell {
         dos.writeInt(y);
         dos.writeUTF(name);
         dos.writeUTF(description);
-
-        dos.writeInt(creatures.size());
-        for (Creature c : creatures.values()) {
-            c.write(dos);
-        }
+        dos.writeBoolean(isInterior);
+        dos.writeInt(id);
 
         dos.writeInt(activators.size());
         for (Activator a : activators.values()) {
@@ -121,6 +145,16 @@ public class WorldCell {
         dos.writeInt(items.size());
         for (Item i : items.values()) {
             i.write(dos);
+        }
+
+        dos.writeInt(entrances.size());
+        for (Entrance e : entrances.values()) {
+            e.write(dos);
+        }
+
+        dos.writeInt(creatures.size());
+        for (Creature c : creatures.values()) {
+            c.write(dos);
         }
     }
 
@@ -179,7 +213,6 @@ public class WorldCell {
     }
 
     public void addItem(Item i) {
-        System.out.println("Adding item with id " + i.getID());
         items.put(i.getID(), i);
         update();
     }
@@ -205,5 +238,18 @@ public class WorldCell {
     public WorldCell setName(String name) {
         this.name = name;
         return this;
+    }
+
+    public Collection<Entrance> getEntrances() {
+        return entrances.values();
+    }
+
+    public WorldCell addEntrance(Entrance entrance) {
+        entrances.put(entrance.getID(), entrance);
+        return this;
+    }
+
+    public Entrance getEntrance(int id) {
+        return entrances.get(id);
     }
 }

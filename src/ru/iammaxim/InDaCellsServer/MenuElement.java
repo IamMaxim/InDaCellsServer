@@ -50,6 +50,8 @@ public class MenuElement {
         NPC,
         CREATURE,
         ACTIVATOR,
-        HEADER
+        HEADER,
+        ACTION,
+        LOCATION
     }
 }

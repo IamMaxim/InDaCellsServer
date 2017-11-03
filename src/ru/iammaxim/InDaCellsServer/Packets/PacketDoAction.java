@@ -55,6 +55,8 @@ public class PacketDoAction extends Packet {
         DEFEND,
         ACTIVATE,
         PICKUP_ITEM,
-        TALK
+        TALK,
+        DO_ACTION,
+        GO_TO
     }
 }

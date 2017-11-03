@@ -9,9 +9,10 @@ import java.util.HashMap;
 
 public class World {
     // {x, {y, cell}}
-    private final HashMap<Integer, HashMap<Integer, WorldCell>> cells = new HashMap<>();
+    private final HashMap<Integer, HashMap<Integer, WorldCell>> map = new HashMap<>();
     private String name;
     private HashMap<String, Player> players = new HashMap<>();
+    private final HashMap<Integer, WorldCell> cells = new HashMap<>();
 
     public World(String name) {
         this.name = name;
@@ -21,22 +22,31 @@ public class World {
         return players.get(name);
     }
 
-    public void addPlayer(String name, Player p) {
-        players.put(name, p);
+    public void addPlayer(Player p) {
+        players.put(p.getName(), p);
     }
 
     public void addCell(int x, int y, WorldCell cell) {
         cell.setX(x);
         cell.setY(y);
-        HashMap<Integer, WorldCell> row = cells.computeIfAbsent(x, k -> new HashMap<>());
+        HashMap<Integer, WorldCell> row = map.computeIfAbsent(x, k -> new HashMap<>());
         row.put(y, cell);
+        cells.put(cell.getID(), cell);
+    }
+
+    public void addCell(WorldCell cell) {
+        cells.put(cell.getID(), cell);
     }
 
     public WorldCell getCell(int x, int y) {
-        HashMap<Integer, WorldCell> row = cells.get(x);
+        HashMap<Integer, WorldCell> row = map.get(x);
         if (row == null)
             return null;
         return row.get(y);
+    }
+
+    public WorldCell getCell(int id) {
+        return cells.get(id);
     }
 
     @Override
@@ -46,8 +56,8 @@ public class World {
 
     public int cellsCount() {
         final int[] i = {0};
-        synchronized (cells) {
-            cells.forEach((x, row) ->
+        synchronized (map) {
+            map.forEach((x, row) ->
                     i[0] += row.size()
             );
         }
@@ -57,8 +67,8 @@ public class World {
     public void save(DataOutputStream dos) throws IOException {
         dos.writeInt(cellsCount());
 
-        synchronized (cells) {
-            cells.forEach((x, row) ->
+        synchronized (map) {
+            map.forEach((x, row) ->
                     row.forEach((y, cell) -> {
                         try {
                             cell.write(dos);
@@ -72,7 +82,7 @@ public class World {
     public void load(DataInputStream dis) throws IOException {
         int count = dis.readInt();
 
-        synchronized (cells) {
+        synchronized (map) {
             for (int i = 0; i < count; i++) {
                 WorldCell cell = WorldCell.read(this, dis);
                 addCell(cell.getX(), cell.getY(), cell);
@@ -84,11 +94,15 @@ public class World {
         return name;
     }
 
-    public HashMap<Integer, HashMap<Integer, WorldCell>> getCells() {
-        return cells;
+    public HashMap<Integer, HashMap<Integer, WorldCell>> getMap() {
+        return map;
     }
 
     public HashMap<String, Player> getPlayers() {
         return players;
+    }
+
+    public HashMap<Integer, WorldCell> getCells() {
+        return cells;
     }
 }

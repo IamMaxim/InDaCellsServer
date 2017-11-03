@@ -28,6 +28,7 @@ public class Creature {
     protected int attackMode = -1;
     protected int id;
     protected Type type;
+    protected int cellID;
 
     public Creature(World world, String name, int hp, int damage) {
         this(world, name);
@@ -117,27 +118,32 @@ public class Creature {
     }
 
     protected boolean doMove() {
-        WorldCell oldCell = world.getCell(x, y);
-        WorldCell newCell = world.getCell(newX, newY);
+        WorldCell oldCell = world.getCell(cellID);
+        WorldCell newCell = world.getCell(actionTargetID);
 
         if (oldCell == null || newCell == null) {
-            System.out.println("Can't move from [" + x + ", " + y + "] to [" + newX + ", " + newY + "] because one of cells doesn't exist");
+            System.out.println("Can't move because one of cells doesn't exist");
             return false;
         }
 
         oldCell.removeCreature(this);
         newCell.addCreature(this);
-
-        this.x = newX;
-        this.y = newY;
         return true;
     }
 
     public void move(int newX, int newY) {
-        System.out.println("Gonna move");
         setState(State.MOVING, 50);
-        this.newX = newX;
-        this.newY = newY;
+        WorldCell dest = world.getCell(newX, newY);
+        if (dest == null) {
+            System.out.println("Can't move " + name + " to [" + newX + ", " + newY + "] because destination is null");
+            return;
+        }
+        this.actionTargetID = dest.getID();
+    }
+
+    public void move(int cellID) {
+        setState(State.MOVING, 50);
+        this.actionTargetID = cellID;
     }
 
     public int getX() {
@@ -250,7 +256,7 @@ public class Creature {
     }
 
     public WorldCell getCurrentCell() {
-        return world.getCell(x, y);
+        return world.getCell(cellID);
     }
 
     public void write(DataOutputStream dos) throws IOException {
@@ -311,6 +317,10 @@ public class Creature {
         setState(State.ATTACKING, 100);
         actionTargetID = targetID;
         attackMode = mode;
+    }
+
+    public void setCellID(int cellID) {
+        this.cellID = cellID;
     }
 
     public enum Type {

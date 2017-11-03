@@ -128,7 +128,17 @@ public class Player extends Human {
     public void move(int newX, int newY) {
         super.move(newX, newY);
         try {
-            NetLib.send(name, new PacketStartAction("Moving...", 2));
+            NetLib.send(name, new PacketStartAction("Moving...", 0.5f));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void move(int cellID) {
+        super.move(cellID);
+        try {
+            NetLib.send(name, new PacketStartAction("Moving...", 0.5f));
         } catch (IOException e) {
             e.printStackTrace();
         }

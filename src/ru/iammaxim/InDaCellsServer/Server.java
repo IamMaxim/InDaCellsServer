@@ -2,18 +2,16 @@ package ru.iammaxim.InDaCellsServer;
 
 import ru.iammaxim.InDaCellsServer.Activators.Activator;
 import ru.iammaxim.InDaCellsServer.Creatures.Creature;
-import ru.iammaxim.InDaCellsServer.Creatures.Human;
 import ru.iammaxim.InDaCellsServer.Creatures.NPC;
 import ru.iammaxim.InDaCellsServer.Creatures.Player;
 import ru.iammaxim.InDaCellsServer.Dialogs.DialogTopic;
 import ru.iammaxim.InDaCellsServer.Items.Item;
-import ru.iammaxim.InDaCellsServer.Items.ItemWeapon;
 import ru.iammaxim.InDaCellsServer.NetBus.NetBus;
 import ru.iammaxim.InDaCellsServer.Packets.*;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
+import ru.iammaxim.InDaCellsServer.World.Entrance;
 import ru.iammaxim.InDaCellsServer.World.World;
 import ru.iammaxim.InDaCellsServer.World.WorldCell;
-import ru.iammaxim.InDaCellsServer.World.WorldCreator;
 import ru.iammaxim.NetLib.Client;
 import ru.iammaxim.NetLib.NetLib;
 import ru.iammaxim.NetLib.Packet;
@@ -46,7 +44,7 @@ public class Server {
 
             for (int x = -20; x <= 20; x++) {
                 for (int y = -20; y <= 20; y++) {
-                    WorldCell cell = new WorldCell();
+                    WorldCell cell = new WorldCell(false);
                     world.addCell(x, y, cell);
                 }
             }
@@ -61,6 +59,10 @@ public class Server {
                                 }
                             }));
 
+            WorldCell testEntrance1 = new WorldCell(true);
+            world.addCell(testEntrance1);
+            world.getCell(0, 1).addEntrance(new Entrance(world, testEntrance1.getID(), "Test door"));
+            testEntrance1.addEntrance(new Entrance(world, world.getCell(0, 1).getID(), "Test door to outside"));
 
             // debug things
             world.getCell(0, 1).addActivator(new Activator(2, "Item generator"));
@@ -70,16 +72,10 @@ public class Server {
     }
 
     public void tick() {
-//        System.out.println("Tick()");
-
         ArrayList<Creature> creatures = new ArrayList<>();
         synchronized (world.getCells()) {
-            for (Integer integer1 : world.getCells().keySet()) {
-                HashMap<Integer, WorldCell> row = world.getCells().get(integer1);
-                for (Integer integer : row.keySet()) {
-                    WorldCell cell = row.get(integer);
-                    creatures.addAll(cell.getCreatures());
-                }
+            for (WorldCell c : world.getCells().values()) {
+                creatures.addAll(c.getCreatures());
             }
         }
         creatures.forEach(Creature::tick);
@@ -104,7 +100,7 @@ public class Server {
                 p.setMaxHunger(10);
                 p.maxHunger();
 
-                world.addPlayer(c.name, p);
+                world.addPlayer(p);
                 world.getCell(startX, startY).addCreature(p);
             }
             try {
@@ -120,7 +116,7 @@ public class Server {
 
         NetBus.register(PacketDoAction.class, (Client c, Packet p) -> {
             PacketDoAction packet = (PacketDoAction) p;
-            System.out.println("Gonna do action " + packet.type + " on " + packet.targetID);
+//            System.out.println("Gonna do action " + packet.type + " on " + packet.targetID);
 
             try {
                 switch (((PacketDoAction) p).type) {
@@ -142,6 +138,18 @@ public class Server {
                         break;
                     case TALK:
                         world.getPlayer(c.name).talk(((PacketDoAction) p).targetID, ((PacketDoAction) p).additionalString);
+                        break;
+                    case DO_ACTION:
+                        world.getPlayer(c.name).addMessage("This feature is not yet implemented");
+                        break;
+                    case GO_TO:
+                        Player player = world.getPlayer(c.name);
+                        Entrance e = player.getCurrentCell().getEntrance(packet.targetID);
+                        if (e == null) {
+                            player.addMessage("No such entrance found.");
+                            break;
+                        }
+                        e.transit(player);
                         break;
                 }
             } catch (IOException e) {

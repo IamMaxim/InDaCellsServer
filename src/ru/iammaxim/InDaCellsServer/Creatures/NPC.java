@@ -1,9 +1,12 @@
 package ru.iammaxim.InDaCellsServer.Creatures;
 
 import ru.iammaxim.InDaCellsServer.Dialogs.DialogTopic;
+import ru.iammaxim.InDaCellsServer.Packets.PacketDialogTopics;
 import ru.iammaxim.InDaCellsServer.Quests.Quest;
 import ru.iammaxim.InDaCellsServer.World.World;
+import ru.iammaxim.NetLib.NetLib;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -28,8 +31,6 @@ public class NPC extends Human {
             text = getAnswerForTopic(p, topic);
 
         p.addMessage(name, text);
-        sendQuestsToClient(p);
-        sendTopicsToClient(p);
 
         for (DialogTopic dialogTopic : getTopics(p)) {
             if (dialogTopic.getName().equals(topic)) {
@@ -37,6 +38,9 @@ public class NPC extends Human {
                 break;
             }
         }
+
+        sendQuestsToClient(p);
+        sendTopicsToClient(p);
     }
 
     public NPC attachQuest(Quest q) {
@@ -55,7 +59,12 @@ public class NPC extends Human {
         ArrayList<DialogTopic> topics1 = getTopics(p);
         if (topics1.isEmpty())
             return;
-        p.addMessage(name, "Темы:\n" + String.join("\n", topics1.stream().map(DialogTopic::getName).collect(Collectors.toList())));
+//        p.addMessage(name, "Темы:\n" + String.join("\n", topics1.stream().map(DialogTopic::getName).collect(Collectors.toList())));
+        try {
+            NetLib.send(p.name, new PacketDialogTopics(topics1.stream().map(DialogTopic::getName).collect(Collectors.toList())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendQuestsToClient(Player p) {

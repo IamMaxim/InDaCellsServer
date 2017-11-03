@@ -72,6 +72,18 @@ public class PacketCell extends Packet {
                 elements.add(new MenuElement(MenuElement.Type.ACTIVATOR, a.getName(), a.getID()).setAdditionalString(a.getDescription()));
             });
         }
+
+        elements.add(new MenuElement(MenuElement.Type.HEADER, "Действия", 0));
+
+        elements.add(new MenuElement(MenuElement.Type.ACTION, "Осмотреться", 0));
+
+        elements.add(new MenuElement(MenuElement.Type.HEADER, "Локации", 0));
+
+        synchronized (cell.getEntrances()) {
+            cell.getEntrances().forEach(e -> {
+                elements.add(new MenuElement(MenuElement.Type.LOCATION, e.getName(), e.getID()));
+            });
+        }
     }
 
     @Override
